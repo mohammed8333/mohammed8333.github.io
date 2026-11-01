@@ -597,13 +597,10 @@ input:focus, select:focus, textarea:focus {
 
 /* Category Navigation Filter */
 .menu-controls {
-  position: sticky;
-  top: 72px;
-  z-index: 90;
+  position: relative;
   background-color: var(--bg-body);
   padding: 16px 0;
   border-bottom: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
 }
 
 .search-box-wrap {
