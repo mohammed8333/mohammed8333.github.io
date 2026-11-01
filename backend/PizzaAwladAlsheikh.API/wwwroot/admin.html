@@ -71,6 +71,9 @@
   <!-- ======================================================== -->
   <div id="admin-main-wrapper" style="display: none; width: 100%; min-height: 100vh;">
     
+    <!-- خلفية تعتيم للشاشات الصغيرة عند فتح القائمة -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="closeAdminSidebar()"></div>
+
     <!-- القائمة الجانبية (Sidebar) -->
     <aside class="admin-sidebar">
       <div class="sidebar-header">
@@ -81,6 +84,7 @@
           <h2>أولاد الشيخ</h2>
           <span>لوحة إدارة المطعم</span>
         </div>
+        <button type="button" class="btn-sidebar-close" onclick="closeAdminSidebar()" title="إغلاق">&times;</button>
       </div>
 
       <nav class="sidebar-nav">

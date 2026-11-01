@@ -200,6 +200,7 @@ function saveSettings() {
 // ==========================================
 function switchAdminView(viewName) {
   adminState.currentView = viewName;
+  closeAdminSidebar(); // إغلاق القائمة تلقائياً في الموبايل عند اختيار قسم
 
   // تحديث أزرار القائمة الجانبية
   document.querySelectorAll('.nav-item-btn').forEach(btn => {
@@ -1063,7 +1064,28 @@ function setupAdminListeners() {
   });
 
   // زر القائمة للموبايل
-  document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-    document.querySelector('.admin-sidebar').classList.toggle('mobile-open');
-  });
+  document.getElementById('mobile-menu-btn')?.addEventListener('click', toggleAdminSidebar);
+  document.getElementById('sidebar-backdrop')?.addEventListener('click', closeAdminSidebar);
+}
+
+// ==========================================
+// دوال إدارة القائمة الجانبية للموبايل
+// ==========================================
+function openAdminSidebar() {
+  document.querySelector('.admin-sidebar')?.classList.add('mobile-open');
+  document.getElementById('sidebar-backdrop')?.classList.add('active');
+}
+
+function closeAdminSidebar() {
+  document.querySelector('.admin-sidebar')?.classList.remove('mobile-open');
+  document.getElementById('sidebar-backdrop')?.classList.remove('active');
+}
+
+function toggleAdminSidebar() {
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (sidebar && sidebar.classList.contains('mobile-open')) {
+    closeAdminSidebar();
+  } else {
+    openAdminSidebar();
+  }
 }

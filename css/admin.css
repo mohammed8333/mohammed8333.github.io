@@ -182,8 +182,9 @@ body {
   top: 0;
   bottom: 0;
   right: 0;
-  z-index: 100;
-  transition: transform 0.3s ease;
+  left: auto;
+  z-index: 1200;
+  transition: right 0.3s ease, left 0.3s ease;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -192,6 +193,37 @@ body {
   left: 0;
   border-left: none;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* خلفية التعتيم للشاشات الصغيرة */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 1150;
+  display: none;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+}
+
+.btn-sidebar-close {
+  display: none;
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 26px;
+  line-height: 1;
+  padding: 4px 8px;
+  cursor: pointer;
+  margin-right: auto;
+}
+
+[dir="ltr"] .btn-sidebar-close {
+  margin-right: 0;
+  margin-left: auto;
 }
 
 .sidebar-header {
@@ -614,22 +646,139 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* تجاوب الشاشات الصغيرة */
+/* تجاوب الشاشات الصغيرة للموبايل والتابلت */
 @media (max-width: 900px) {
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  #admin-main-wrapper {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden;
+  }
+
   .admin-sidebar {
-    transform: translateX(100%);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: -290px !important; /* مخفية تماماً خارج الشاشة في اليمين بدون أي transform */
+    left: auto !important;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 1200;
+    transform: none !important;
+    box-shadow: none;
   }
+
   [dir="ltr"] .admin-sidebar {
-    transform: translateX(-100%);
+    right: auto !important;
+    left: -290px !important;
+    transform: none !important;
   }
+
   .admin-sidebar.mobile-open {
-    transform: translateX(0);
+    right: 0 !important;
+    left: auto !important;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
   }
+
+  [dir="ltr"] .admin-sidebar.mobile-open {
+    left: 0 !important;
+    right: auto !important;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-sidebar-close {
+    display: block;
+  }
+
   .admin-main {
     margin-right: 0 !important;
     margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden;
   }
+
+  .admin-topbar {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .topbar-title {
+    font-size: 14.5px;
+    gap: 8px;
+  }
+
   .btn-mobile-menu {
     display: flex !important;
+  }
+
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .topbar-actions .btn-admin-action span {
+    display: none;
+  }
+
+  .topbar-actions .btn-admin-action {
+    padding: 8px 10px;
+  }
+
+  .topbar-actions > div:last-child div {
+    display: none; /* إخفاء نص المدير لإبقاء الهيدر خفيفاً */
+  }
+
+  .admin-body {
+    padding: 14px 10px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .admin-card {
+    padding: 14px 10px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .toolbar-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .toolbar-group > div:first-child {
+    width: 100% !important;
+  }
+
+  .toolbar-group input {
+    width: 100%;
+  }
+
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 }
