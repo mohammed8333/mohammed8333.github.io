@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة إدارة مطعم بيتزا أولاد الشيخ | Dashboard</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://img.icons8.com/emoji/96/pizza-emoji.png" type="image/png">
+
+  <!-- Google Fonts (Cairo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Admin Stylesheet -->
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ======================================================== -->
+  <!-- 1. شاشة تسجيل الدخول المستقلة (Login View) -->
+  <!-- ======================================================== -->
+  <div id="login-wrapper" class="admin-login-wrapper" style="display: flex;">
+    <div class="login-card">
+      <div class="login-logo">
+        <i class="fas fa-pizza-slice"></i>
+      </div>
+      <h2 class="login-title">بيتزا أولاد الشيخ</h2>
+      <p class="login-desc">لوحة تحكم إدارة المطعم - فرع إمبابة</p>
+
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم</label>
+          <input type="text" id="login-username" class="form-control" value="admin" placeholder="أدخل اسم المستخدم" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">كلمة المرور</label>
+          <div style="position: relative;">
+            <input type="password" id="login-password" class="form-control" value="AdminPassword123!" placeholder="أدخل كلمة المرور" required style="padding-left: 40px;">
+            <button type="button" onclick="togglePasswordVisibility('login-password', this)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--admin-text-muted); cursor: pointer; padding: 4px;">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div style="font-size: 11.5px; color: var(--admin-text-muted); margin-top: 4px; text-align: right;">
+            الافتراضي: <strong>admin</strong> / <strong>AdminPassword123!</strong>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-admin-submit" style="margin-top: 8px;">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>دخول لوحة التحكم</span>
+        </button>
+      </form>
+
+      <div style="margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--admin-border);">
+        <a href="index.html" style="font-size: 13px; color: var(--admin-text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fas fa-arrow-right"></i>
+          <span>العودة لموقع المطعم الرئيسي</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 2. تخطيط لوحة التحكم الرئيسي (Dashboard Main Layout) -->
+  <!-- ======================================================== -->
+  <div id="admin-main-wrapper" style="display: none; width: 100%; min-height: 100vh;">
+    
+    <!-- القائمة الجانبية (Sidebar) -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand-icon">
+          <i class="fas fa-pizza-slice"></i>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>أولاد الشيخ</h2>
+          <span>لوحة إدارة المطعم</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item-btn active" data-view="orders" onclick="switchAdminView('orders')">
+          <i class="fas fa-clipboard-list"></i>
+          <span>الطلبات الواردة</span>
+          <span id="sidebar-pending-badge" class="sidebar-badge" style="display: none;">0</span>
+        </button>
+
+        <button class="nav-item-btn" data-view="products" onclick="switchAdminView('products')">
+          <i class="fas fa-pizza-slice"></i>
+          <span>قائمة الطعام والأسعار</span>
+        </button>
+
+        <button class="nav-item-btn" data-view="offers" onclick="switchAdminView('offers')">
+          <i class="fas fa-percent"></i>
+          <span>العروض والخصومات</span>
+          <span id="sidebar-offers-badge" class="sidebar-badge" style="display: none;">0</span>
+        </button>
+
+        <button class="nav-item-btn" data-view="overview" onclick="switchAdminView('overview')">
+          <i class="fas fa-chart-line"></i>
+          <span>الإحصائيات والملخص</span>
+        </button>
+
+        <button class="nav-item-btn" data-view="settings" onclick="switchAdminView('settings')">
+          <i class="fas fa-sliders-h"></i>
+          <span>إعدادات المطعم</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" target="_blank" class="btn-sidebar-link">
+          <i class="fas fa-external-link-alt"></i>
+          <span>زيارة الموقع للعملاء</span>
+        </a>
+        <button onclick="handleLogout()" class="nav-item-btn btn-logout" style="padding: 10px 12px;">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>تسجيل الخروج</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- المحتوى الرئيسي (Main Container) -->
+    <main class="admin-main">
+      
+      <!-- الشريط العلوي (Topbar) -->
+      <header class="admin-topbar">
+        <div class="topbar-title">
+          <button id="mobile-menu-btn" class="btn-topbar-icon btn-mobile-menu" style="display: none;">
+            <i class="fas fa-bars"></i>
+          </button>
+          <span id="topbar-view-title">إدارة ومتابعة طلبات العملاء</span>
+        </div>
+
+        <div class="topbar-actions">
+          <a href="index.html" class="btn-admin-action ghost" style="text-decoration: none;">
+            <i class="fas fa-store"></i>
+            <span>الموقع الرئيسي</span>
+          </a>
+
+          <button id="admin-theme-btn" class="btn-topbar-icon" title="تبديل الوضع الليلي">
+            <i class="fas fa-moon"></i>
+          </button>
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-right: 10px;">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--admin-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; line-height: 1.2;">
+              المدير
+              <div style="font-size: 11px; color: var(--admin-text-muted); font-weight: normal;">إدارة النظام</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- جسم الصفحة المتغير (Admin Body) -->
+      <div class="admin-body">
+
+        <!-- ========================================== -->
+        <!-- 1. مشهد الطلبات (Orders View) -->
+        <!-- ========================================== -->
+        <section id="view-orders" class="admin-view-pane active">
+          
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-clipboard-check" style="color: var(--admin-primary);"></i>
+                <span>سجل ومتابعة طلبات العملاء</span>
+              </div>
+
+              <!-- أدوات البحث والتصفية -->
+              <div class="toolbar-group">
+                <div style="position: relative; width: 220px;">
+                  <i class="fas fa-search" style="position: absolute; top: 50%; transform: translateY(-50%); right: 12px; color: var(--admin-text-muted);"></i>
+                  <input type="text" id="orders-search-input" class="form-control" placeholder="بحث برقم الطلب، العميل..." style="padding-right: 34px; font-size: 13px;">
+                </div>
+
+                <div style="display: flex; gap: 4px; overflow-x: auto;">
+                  <button class="btn-admin-action ghost order-filter-pill active" data-status="all" onclick="filterOrdersByStatus('all')">الكل</button>
+                  <button class="btn-admin-action ghost order-filter-pill" data-status="Pending" onclick="filterOrdersByStatus('Pending')">قيد المراجعة</button>
+                  <button class="btn-admin-action ghost order-filter-pill" data-status="Confirmed" onclick="filterOrdersByStatus('Confirmed')">تم التأكيد</button>
+                  <button class="btn-admin-action ghost order-filter-pill" data-status="Preparing" onclick="filterOrdersByStatus('Preparing')">قيد التجهيز</button>
+                  <button class="btn-admin-action ghost order-filter-pill" data-status="OutForDelivery" onclick="filterOrdersByStatus('OutForDelivery')">في الطريق</button>
+                  <button class="btn-admin-action ghost order-filter-pill" data-status="Delivered" onclick="filterOrdersByStatus('Delivered')">تم التسليم</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>رقم الطلب والتاريخ</th>
+                    <th>بيانات العميل</th>
+                    <th>نوع الطلب والعنوان</th>
+                    <th>الأصناف المطلوبة</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة الحالية</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- يتم إدراجه بواسطة admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. مشهد المنتجات والأسعار (Products View) -->
+        <!-- ========================================== -->
+        <section id="view-products" class="admin-view-pane">
+          
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-pizza-slice" style="color: var(--admin-primary);"></i>
+                <span>قائمة طعام بيتزا أولاد الشيخ</span>
+              </div>
+
+              <div class="toolbar-group">
+                <button class="btn-admin-action primary" onclick="openAddProductModal()">
+                  <i class="fas fa-plus"></i>
+                  <span>إضافة صنف جديد</span>
+                </button>
+
+                <div style="position: relative; width: 200px;">
+                  <i class="fas fa-search" style="position: absolute; top: 50%; transform: translateY(-50%); right: 12px; color: var(--admin-text-muted);"></i>
+                  <input type="text" id="products-search-input" class="form-control" placeholder="بحث في المنيو..." style="padding-right: 34px; font-size: 13px;">
+                </div>
+
+                <select id="products-category-filter" class="form-control" style="width: 170px; font-size: 13px;">
+                  <option value="all">كل التصنيفات</option>
+                  <option value="cat-1">بيتزا (إيطالي وشرقي)</option>
+                  <option value="cat-2">كريب</option>
+                  <option value="cat-3">برجر</option>
+                  <option value="cat-4">سندوتشات</option>
+                  <option value="cat-5">فطير مشلتت وحلو وحادق</option>
+                  <option value="cat-6">حواوشي</option>
+                  <option value="cat-7">إضافات ومشروبات</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>الصورة</th>
+                    <th>اسم الصنف والقسم</th>
+                    <th>السعر الأساسي</th>
+                    <th>حالة الاعتماد</th>
+                    <th>التوفر الحالي</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <!-- يتم إدراجه بواسطة admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. مشهد العروض والخصومات (Offers View) -->
+        <!-- ========================================== -->
+        <section id="view-offers" class="admin-view-pane">
+          
+          <!-- بطاقة العروض والكومبو -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-percent" style="color: var(--admin-primary);"></i>
+                <span>إدارة عروض وخصومات أولاد الشيخ</span>
+              </div>
+
+              <div class="toolbar-group">
+                <button class="btn-admin-action primary" onclick="openAddOfferModal()">
+                  <i class="fas fa-plus"></i>
+                  <span>إضافة عرض جديد</span>
+                </button>
+
+                <button class="btn-admin-action ghost" onclick="openAddCouponModal()">
+                  <i class="fas fa-ticket-alt"></i>
+                  <span>إضافة كود خصم</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>الصورة</th>
+                    <th>عنوان العرض والتفاصيل</th>
+                    <th>شارة العرض</th>
+                    <th>السعر قبل / بعد</th>
+                    <th>حالة الاعتماد</th>
+                    <th>الحالة بالموقع</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-offers-table-body">
+                  <!-- يتم إدراجه بواسطة admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- بطاقة أكواد وكوبونات الخصم -->
+          <div class="admin-card" style="margin-top: 24px;">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-ticket-alt" style="color: var(--admin-secondary);"></i>
+                <span>أكواد الخصم الترويجية (Discount Promo Codes)</span>
+              </div>
+              <button class="btn-admin-action primary" onclick="openAddCouponModal()">
+                <i class="fas fa-plus"></i>
+                <span>إضافة كود جديد</span>
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>كود الخصم</th>
+                    <th>نوع وقيمة الخصم</th>
+                    <th>الحد الأدنى للطلب</th>
+                    <th>الحالة</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-coupons-table-body">
+                  <!-- يتم إدراجه بواسطة admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. مشهد الإحصائيات (Overview View) -->
+        <!-- ========================================== -->
+        <section id="view-overview" class="admin-view-pane">
+          
+          <!-- بطاقات المؤشرات -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon red"><i class="fas fa-shopping-bag"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-total-orders">0</h3>
+                <span>إجمالي الطلبات المسجلة</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-pending-orders">0</h3>
+                <span>طلبات قيد المراجعة</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="fas fa-coins"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-revenue">0 ج.م</h3>
+                <span>إجمالي المبيعات المؤكدة</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="fas fa-utensils"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-total-products">0</h3>
+                <span>أصناف قائمة الطعام</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- جدول آخر الطلبات -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-history" style="color: var(--admin-primary);"></i>
+                <span>أحدث الطلبات الواردة</span>
+              </div>
+              <button class="btn-admin-action ghost" onclick="switchAdminView('orders')">عرض كافة الطلبات</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>رقم الطلب</th>
+                    <th>اسم العميل</th>
+                    <th>نوع الطلب</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة</th>
+                    <th>الوقت</th>
+                  </tr>
+                </thead>
+                <tbody id="overview-recent-orders">
+                  <!-- يتم إدراجه بواسطة admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. مشهد إعدادات المطعم (Settings View) -->
+        <!-- ========================================== -->
+        <section id="view-settings" class="admin-view-pane">
+          
+          <div class="admin-card" style="max-width: 800px;">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-cog" style="color: var(--admin-primary);"></i>
+                <span>بيانات وإعدادات مطعم بيتزا أولاد الشيخ</span>
+              </div>
+            </div>
+
+            <form onsubmit="handleSaveSettings(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <label class="form-label">اسم المطعم (عربي)</label>
+                  <input type="text" id="setting-res-name-ar" class="form-control" required>
+                </div>
+                <div>
+                  <label class="form-label">اسم المطعم (English)</label>
+                  <input type="text" id="setting-res-name-en" class="form-control" required>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <label class="form-label">رقم هاتف الاتصال المباشر</label>
+                  <input type="text" id="setting-phone-call" class="form-control" required>
+                </div>
+                <div>
+                  <label class="form-label">رقم الواتساب الرسمي (بدون +)</label>
+                  <input type="text" id="setting-wa-number" class="form-control" required>
+                  <small style="font-size: 11px; color: var(--admin-text-muted);">مثال: 201112962692</small>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <label class="form-label">العنوان بالتفصيل</label>
+                <input type="text" id="setting-addr-ar" class="form-control" required>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <label class="form-label">رابط خرائط جوجل (Google Maps Link)</label>
+                <input type="url" id="setting-maps-link" class="form-control" required>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <label class="form-label">رسوم التوصيل الافتراضية (ج.م)</label>
+                  <input type="number" id="setting-del-fee" class="form-control" required>
+                </div>
+                <div>
+                  <label class="form-label">الحد الأدنى للطلب (ج.م)</label>
+                  <input type="number" id="setting-min-order" class="form-control" required>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <label class="form-label">مواعيد العمل الرسمية</label>
+                <input type="text" id="setting-hours-ar" class="form-control" required>
+              </div>
+
+              <div style="margin-bottom: 24px;">
+                <label class="form-label">نص الشريط الترويجي الإعلاني (أعلى الموقع)</label>
+                <textarea id="setting-announcement-ar" class="form-control" rows="2" style="resize: none;"></textarea>
+              </div>
+
+              <button type="submit" class="btn-admin-submit" style="width: auto; padding: 12px 28px;">
+                <i class="fas fa-save"></i>
+                <span>حفظ التعديلات وتحديث الموقع فورياً</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- بطاقة أمان الحساب وتغيير بيانات الدخول -->
+          <div class="admin-card" style="max-width: 800px; margin-top: 24px;">
+            <div class="admin-card-header">
+              <div class="admin-card-title">
+                <i class="fas fa-user-lock" style="color: var(--admin-primary);"></i>
+                <span>أمان الحساب وتغيير بيانات تسجيل الدخول</span>
+              </div>
+            </div>
+
+            <form onsubmit="handleUpdateCredentials(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                  <label class="form-label">اسم المستخدم الحالي للإدارة *</label>
+                  <input type="text" id="setting-admin-username" class="form-control" required>
+                </div>
+                <div>
+                  <label class="form-label">كلمة المرور الجديدة</label>
+                  <input type="password" id="setting-admin-password" class="form-control" placeholder="اتركها فارغة إذا لم ترغب بتغييرها">
+                </div>
+              </div>
+
+              <div style="margin-bottom: 20px;">
+                <label class="form-label">تأكيد كلمة المرور الجديدة</label>
+                <input type="password" id="setting-admin-password-confirm" class="form-control" placeholder="أعد إدخال كلمة المرور الجديدة للتأكيد">
+              </div>
+
+              <button type="submit" class="btn-admin-action primary" style="padding: 12px 24px; font-size: 13.5px;">
+                <i class="fas fa-key"></i>
+                <span>تحديث بيانات تسجيل الدخول</span>
+              </button>
+            </form>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 6. النوافذ المنبثقة للتعديل والإضافة (Modals) -->
+  <!-- ======================================================== -->
+  
+  <!-- نافذة إضافة وتعديل صنف -->
+  <div id="product-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2500; padding: 20px;">
+    <div style="background: var(--admin-card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 24px; border: 1px solid var(--admin-border); box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--admin-border); padding-bottom: 12px;">
+        <h3 id="modal-product-title" style="font-size: 18px; font-weight: 800;">تعديل صنف</h3>
+        <button onclick="closeProductEditModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--admin-text-muted);">&times;</button>
+      </div>
+
+      <form onsubmit="handleSaveProduct(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label">الاسم بالعربية *</label>
+            <input type="text" id="form-product-name-ar" class="form-control" required>
+          </div>
+          <div>
+            <label class="form-label">الاسم بالإنجليزية</label>
+            <input type="text" id="form-product-name-en" class="form-control">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label">التصنيف *</label>
+            <select id="form-product-cat" class="form-control">
+              <option value="cat-1">بيتزا (إيطالي وشرقي)</option>
+              <option value="cat-2">كريب</option>
+              <option value="cat-3">برجر</option>
+              <option value="cat-4">سندوتشات</option>
+              <option value="cat-5">فطير مشلتت وحلو وحادق</option>
+              <option value="cat-6">حواوشي</option>
+              <option value="cat-7">إضافات ومشروبات</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">السعر الأساسي (ج.م) *</label>
+            <input type="number" id="form-product-price" class="form-control" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label class="form-label">رابط الصورة (Image URL)</label>
+          <input type="url" id="form-product-img" class="form-control" placeholder="https://...">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">وصف الصنف والمكونات</label>
+          <textarea id="form-product-desc-ar" class="form-control" rows="2" style="resize: none;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 20px; background: var(--admin-bg); padding: 12px; border-radius: var(--radius-sm);">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="form-product-sample">
+            <span>عينة تجريبية (تتطلب تأكيد)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="form-product-avail" checked>
+            <span>متاح للطلب</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" onclick="closeProductEditModal()" class="btn-admin-action ghost" style="padding: 10px 18px;">إلغاء</button>
+          <button type="submit" class="btn-admin-action primary" style="padding: 10px 22px;">حفظ الصنف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة وتعديل عرض ترويجي (Offer Modal) -->
+  <div id="offer-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2500; padding: 20px;">
+    <div style="background: var(--admin-card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 24px; border: 1px solid var(--admin-border); box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--admin-border); padding-bottom: 12px;">
+        <h3 id="modal-offer-title" style="font-size: 18px; font-weight: 800;">إضافة عرض ترويجي جديد</h3>
+        <button onclick="closeOfferModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--admin-text-muted);">&times;</button>
+      </div>
+
+      <form onsubmit="handleSaveOffer(event)">
+        <div style="margin-bottom: 12px;">
+          <label class="form-label">عنوان العرض بالعربية *</label>
+          <input type="text" id="form-offer-title-ar" class="form-control" placeholder="مثال: عرض الصحاب (2 بيتزا لارج + بيبسي)" required>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label class="form-label">تفاصيل ومكونات العرض *</label>
+          <textarea id="form-offer-desc-ar" class="form-control" rows="2" placeholder="اكتب الأصناف المشمولة في العرض بالتفصيل..." style="resize: none;" required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label">السعر قبل الخصم (ج.م)</label>
+            <input type="number" id="form-offer-orig-price" class="form-control" placeholder="350">
+          </div>
+          <div>
+            <label class="form-label">السعر بعد الخصم (ج.م) *</label>
+            <input type="number" id="form-offer-price" class="form-control" placeholder="265" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label">شارة التوفير (Badge)</label>
+            <input type="text" id="form-offer-badge" class="form-control" placeholder="مثال: وفر 25% أو عرض الأسبوع">
+          </div>
+          <div>
+            <label class="form-label">تاريخ انتهاء العرض</label>
+            <input type="date" id="form-offer-expiry" class="form-control">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label">رابط صورة العرض (Image URL)</label>
+          <input type="url" id="form-offer-img" class="form-control" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 20px; background: var(--admin-bg); padding: 12px; border-radius: var(--radius-sm);">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="form-offer-sample">
+            <span>عينة تجريبية (تتطلب تأكيد)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            <input type="checkbox" id="form-offer-active" checked>
+            <span>عرض نشط ويظهر للعملاء بالموقع</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" onclick="closeOfferModal()" class="btn-admin-action ghost" style="padding: 10px 18px;">إلغاء</button>
+          <button type="submit" class="btn-admin-action primary" style="padding: 10px 22px;">حفظ العرض</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة كود خصم (Coupon Modal) -->
+  <div id="coupon-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2500; padding: 20px;">
+    <div style="background: var(--admin-card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 440px; padding: 24px; border: 1px solid var(--admin-border); box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--admin-border); padding-bottom: 12px;">
+        <h3 style="font-size: 18px; font-weight: 800;">إضافة كود خصم جديد</h3>
+        <button onclick="closeCouponModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--admin-text-muted);">&times;</button>
+      </div>
+
+      <form onsubmit="handleSaveCoupon(event)">
+        <div style="margin-bottom: 12px;">
+          <label class="form-label">كود الخصم (بالحروف الإنجليزية) *</label>
+          <input type="text" id="form-coupon-code" class="form-control" placeholder="مثال: SHEIKH10 أو FRIDAY20" style="text-transform: uppercase;" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label">نوع الخصم *</label>
+            <select id="form-coupon-type" class="form-control">
+              <option value="percent">نسبة مئوية (%)</option>
+              <option value="fixed">مبلغ ثابت (ج.م)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">قيمة الخصم *</label>
+            <input type="number" id="form-coupon-val" class="form-control" placeholder="مثال: 10 أو 25" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">الحد الأدنى للطلب لتفعيل الخصم (ج.م)</label>
+          <input type="number" id="form-coupon-min" class="form-control" placeholder="100">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" onclick="closeCouponModal()" class="btn-admin-action ghost" style="padding: 10px 18px;">إلغاء</button>
+          <button type="submit" class="btn-admin-action primary" style="padding: 10px 22px;">حفظ الكود</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- إشعار التوست (Toast Notification) -->
+  <div id="admin-toast" class="admin-toast"></div>
+
+  <!-- ملفات الجافاسكريبت -->
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

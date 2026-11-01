@@ -1,0 +1,30 @@
+# .NET / C#
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+*.user
+appsettings.Development.json
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+*.iml
+android/.gradle/
+android/local.properties
+android/app/build/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
