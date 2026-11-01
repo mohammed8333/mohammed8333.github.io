@@ -1,16 +1,724 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>بيتزا أولاد الشيخ | إمبابة - Pizza Awlad Alsheikh</title>
-  <meta http-equiv="refresh" content="0; url=website/index.html">
-  <script>
-    window.location.replace("website/index.html");
-  </script>
+  
+  <!-- Favicon & Meta Tags -->
+  <meta name="description" content="مطعم بيتزا أولاد الشيخ بإمبابة - أشهى أنواع البيتزا الإيطالي والشرقي، الكريب، البرجر، الفطير المشلتت، والحواوشي. توصيل 24 ساعة طوال أيام الأسبوع.">
+  <meta name="theme-color" content="#c62828">
+  <link rel="icon" href="https://img.icons8.com/emoji/96/pizza-emoji.png" type="image/png">
+
+  <!-- Google Fonts (Cairo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body style="font-family: system-ui, sans-serif; text-align: center; padding: 50px 20px;">
-  <h2>مطعم بيتزا أولاد الشيخ - إمبابة</h2>
-  <p>جاري تحويلك إلى الموقع... <a href="website/index.html">اضغط هنا إن لم يتم تحويلك تلقائياً</a></p>
+<body>
+
+  <!-- 1. شريط الإعلانات العلوي (Announcement Bar) -->
+  <div class="top-announcement">
+    <i class="fas fa-bullhorn"></i>
+    <span id="announcement-text">أهلاً بكم في بيتزا أولاد الشيخ بإمبابة! خدمة التوصيل متوفرة 24 ساعة يومياً 🍕 (الأسعار في التطبيق عينات تجريبية تتطلب اعتماد الإدارة)</span>
+  </div>
+
+  <!-- 2. الترويسة وشريط التنقل الرئيسي (Header & Navbar) -->
+  <header class="main-header">
+    <div class="container navbar">
+      
+      <!-- الشعار واسم المطعم -->
+      <a href="#home" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fas fa-pizza-slice"></i>
+        </div>
+        <div class="brand-text">
+          <h1>بيتزا أولاد الشيخ</h1>
+          <span>Pizza Awlad Alsheikh • إمبابة</span>
+        </div>
+      </a>
+
+      <!-- روابط التنقل -->
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link active">الرئيسية</a></li>
+        <li><a href="#menu" class="nav-link">قائمة الطعام</a></li>
+        <li><a href="#offers" class="nav-link">العروض</a></li>
+        <li><a href="#about" class="nav-link">معلومات المطعم</a></li>
+        <li><a href="tel:01112962692" class="nav-link"><i class="fas fa-phone-alt"></i> 01112962692</a></li>
+      </ul>
+
+      <!-- الإجراءات (الوضع الليلي، اللغة، الإدارة، السلة) -->
+      <div class="nav-actions">
+        <!-- زر تغيير اللغة -->
+        <button id="lang-toggle-btn" class="btn-icon" title="تغيير اللغة / Change Language">EN</button>
+        
+        <!-- زر الوضع الليلي -->
+        <button id="theme-toggle-btn" class="btn-icon" title="تبديل الوضع الليلي / Dark Mode">
+          <i class="fas fa-moon"></i>
+        </button>
+
+        <!-- رابط صفحة إدارة المطعم المنفصلة -->
+        <a href="admin.html" class="btn-icon" title="لوحة تحكم إدارة المطعم (صفحة منفصلة)" style="color: var(--primary);">
+          <i class="fas fa-user-shield"></i>
+        </a>
+
+        <!-- زر عربة التسوق -->
+        <button id="cart-nav-btn" class="btn-cart-nav">
+          <i class="fas fa-shopping-basket"></i>
+          <span class="cart-text">السلة</span>
+          <span id="nav-cart-badge" class="cart-badge">0</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 3. القسم الترحيبي (Hero Section) -->
+  <section id="home" class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="dot"></span>
+          <span>مفتوح 24 ساعة يومياً • توصيل سريع لإمبابة وضواحيها</span>
+        </div>
+        <h2 class="hero-title">
+          أصل البيتزا الشرقي والإيطالي في <span>إمبابة</span>
+        </h2>
+        <p class="hero-subtitle">
+          نقدم لكم أشهى أنواع البيتزا، الكريب المقرمش، الفطير المشلتت بالسمن البلدي، والحواوشي الفاخر بأعلى جودة وطعم أصيل يرضي كل العائلة.
+        </p>
+
+        <div class="hero-features">
+          <div class="hero-feat-item"><i class="fas fa-motorcycle"></i> خدمة توصيل 24/7</div>
+          <div class="hero-feat-item"><i class="fas fa-star" style="color: #fbbf24;"></i> تقييم 3.9 (235+ تقييم)</div>
+          <div class="hero-feat-item"><i class="fas fa-fire"></i> تحضير طازج على الطلب</div>
+        </div>
+
+        <div class="hero-buttons">
+          <a href="#menu" class="btn-primary">
+            <i class="fas fa-book-open"></i>
+            <span>تصفح المنيو واطلب الآن</span>
+          </a>
+          <a href="https://wa.me/201112962692" target="_blank" class="btn-whatsapp-hero">
+            <i class="fab fa-whatsapp"></i>
+            <span>طلب فوري عبر واتساب</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. شريط المعلومات السريعة (Quick Bar) -->
+  <div class="quick-bar">
+    <div class="container quick-bar-grid">
+      <div class="quick-bar-item">
+        <div class="quick-icon"><i class="fas fa-phone-volume"></i></div>
+        <div class="quick-info">
+          <strong>اتصال مباشر: 01112962692</strong>
+          <span>جاهزون للرد على اتصالاتكم دائماً</span>
+        </div>
+      </div>
+      <div class="quick-bar-item">
+        <div class="quick-icon"><i class="fab fa-whatsapp"></i></div>
+        <div class="quick-info">
+          <strong>واتساب: +201112962692</strong>
+          <span>اطلب بالرسائل الصوتية أو النصية</span>
+        </div>
+      </div>
+      <div class="quick-bar-item">
+        <div class="quick-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="quick-info">
+          <strong>إمبابة - امتداد شارع الوحدة</strong>
+          <span>المنيرة، الجيزة (خدمة تيك أواي وتوصيل)</span>
+        </div>
+      </div>
+      <div class="quick-bar-item">
+        <div class="quick-icon"><i class="fas fa-clock"></i></div>
+        <div class="quick-info">
+          <strong>مفتوح طوال 24 ساعة</strong>
+          <span>خدمة مستمرة ليلاً ونهاراً</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. قسم العروض والخصومات الحصرية (Promotional Offers) -->
+  <section id="offers" class="container">
+    <div class="section-title-wrap">
+      <h2 class="section-title"><i class="fas fa-percent" style="color: var(--secondary); font-size: 24px;"></i> عروض وخصومات أولاد الشيخ</h2>
+      <p class="section-desc">أقوى الكومبوهات والعروض العائلية بأسعار خاصة وتوفير حقيقي (يمكنك الطلب مباشرة من العرض)</p>
+    </div>
+
+    <!-- شبكة العروض الديناميكية -->
+    <div class="offers-grid" id="offers-container">
+      <!-- يتم إدراج بطاقات العروض التفاعلية بواسطة app.js -->
+    </div>
+  </section>
+
+  <!-- 6. قسم قائمة الطعام (Menu Section) -->
+  <section id="menu">
+    <!-- شريط التحكم بالقائمة: الفلترة والبحث -->
+    <div class="menu-controls">
+      <div class="container">
+        
+        <!-- حقل البحث السريع -->
+        <div class="search-box-wrap">
+          <div class="search-input-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="ابحث عن بيتزا، كريب، برجر، حواوشي...">
+          </div>
+        </div>
+
+        <!-- أزرار التصنيفات -->
+        <div class="categories-scroll" id="categories-container">
+          <!-- يتم إدراج التصنيفات بواسطة app.js -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- شبكة المنتجات -->
+    <div class="container">
+      <div class="products-grid" id="products-container">
+        <!-- يتم إدراج بطاقات المنتجات بواسطة app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. قسم معلومات المطعم والخريطة (Restaurant Info & Map) -->
+  <section id="about" class="restaurant-info-section">
+    <div class="container">
+      <div class="section-title-wrap" style="margin-top: 0;">
+        <h2 class="section-title">عن مطعم بيتزا أولاد الشيخ</h2>
+        <p class="section-desc">نرحب بكم دائماً في فرعنا بإمبابة أو نصلكم أينما كنتم</p>
+      </div>
+
+      <div class="info-grid">
+        
+        <!-- بطاقة المعلومات -->
+        <div class="info-card">
+          <div class="info-item">
+            <div class="info-item-icon"><i class="fas fa-map-marked-alt"></i></div>
+            <div>
+              <h4 style="font-weight: 800; margin-bottom: 4px;">العنوان</h4>
+              <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">امتداد شارع الوحدة، المنيرة، إمبابة، الجيزة، مصر.</p>
+              <a href="https://maps.app.goo.gl/Hi55NFkp5H8ZNDqV6" target="_blank" style="display: inline-block; margin-top: 6px; color: var(--primary); font-weight: 700; font-size: 13px; text-decoration: underline;">
+                <i class="fas fa-directions"></i> الاتجاهات عبر خرائط جوجل
+              </a>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-item-icon"><i class="fas fa-phone-alt"></i></div>
+            <div>
+              <h4 style="font-weight: 800; margin-bottom: 4px;">الهاتف والطلبات</h4>
+              <p style="font-size: 13.5px; color: var(--text-muted);">
+                موبايل: <a href="tel:01112962692" style="font-weight: 800; color: var(--text-main);">01112962692</a><br>
+                واتساب: <a href="https://wa.me/201112962692" target="_blank" style="font-weight: 800; color: var(--whatsapp);">+201112962692</a>
+              </p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-item-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <h4 style="font-weight: 800; margin-bottom: 4px;">مواعيد العمل</h4>
+              <p style="font-size: 13.5px; color: var(--text-muted);">شغالين 24 ساعة يومياً (طوال الأسبوع دون إجازات)</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-item-icon"><i class="fas fa-star" style="color: #fbbf24;"></i></div>
+            <div>
+              <h4 style="font-weight: 800; margin-bottom: 4px;">تقييم العملاء على جوجل</h4>
+              <p style="font-size: 13.5px; color: var(--text-muted);">
+                <strong>3.9 من 5</strong> (بناءً على أكثر من 235 مراجعة وتقييم)
+              </p>
+              <a href="https://maps.app.goo.gl/Hi55NFkp5H8ZNDqV6" target="_blank" style="font-size: 12.5px; color: var(--secondary); text-decoration: underline;">عرض آراء العملاء</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- الخريطة التفاعلية -->
+        <div>
+          <div class="map-container">
+            <iframe 
+              src="https://maps.google.com/maps?q=30.0880921,31.2103625&hl=ar&z=16&output=embed"
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade"
+              title="خريطة موقع بيتزا أولاد الشيخ">
+            </iframe>
+          </div>
+          <div style="margin-top: 10px; font-size: 12.5px; color: var(--text-muted); text-align: center;">
+            <i class="fas fa-info-circle"></i> يمكنك فتح الخريطة والحصول على مسار القيادة المباشر لفرع إمبابة.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. التذييل (Footer) -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 14px;">
+            <div class="brand-icon"><i class="fas fa-pizza-slice"></i></div>
+            <div class="brand-text">
+              <h1 style="color: white;">بيتزا أولاد الشيخ</h1>
+              <span style="color: #a1a1aa;">إمبابة، المنيرة - الجيزة</span>
+            </div>
+          </div>
+          <p style="font-size: 13px; line-height: 1.6;">
+            أفضل بيتزا شرقي وإيطالي وكريب وحواوشي وفطير في إمبابة. نعمل بأجود المكونات الطازجة لنقدم لكم تجربة مميزة وممتعة.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h3>أقسام القائمة</h3>
+          <ul style="list-style: none; font-size: 13.5px; display: flex; flex-direction: column; gap: 8px;">
+            <li><a href="#menu" onclick="selectCategory('cat-1')"><i class="fas fa-chevron-left" style="font-size: 10px; margin-left: 6px;"></i> بيتزا إيطالي وشرقي</a></li>
+            <li><a href="#menu" onclick="selectCategory('cat-2')"><i class="fas fa-chevron-left" style="font-size: 10px; margin-left: 6px;"></i> كريب حادق وحلو</a></li>
+            <li><a href="#menu" onclick="selectCategory('cat-5')"><i class="fas fa-chevron-left" style="font-size: 10px; margin-left: 6px;"></i> فطير مشلتت بالسمن البلدي</a></li>
+            <li><a href="#menu" onclick="selectCategory('cat-6')"><i class="fas fa-chevron-left" style="font-size: 10px; margin-left: 6px;"></i> حواوشي لحمة وفراخ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>تواصل وطلب سريع</h3>
+          <p style="font-size: 13px; margin-bottom: 12px;"><i class="fas fa-phone-alt"></i> الهاتف: 01112962692</p>
+          <p style="font-size: 13px; margin-bottom: 12px;"><i class="fab fa-whatsapp"></i> واتساب: 01112962692</p>
+          <p style="font-size: 13px; margin-bottom: 16px;"><i class="fas fa-map-marker-alt"></i> إمبابة، شارع الوحدة، المنيرة</p>
+          <a href="admin.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); color: #e4e4e7; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">
+            <i class="fas fa-user-shield"></i>
+            <span>لوحة تحكم إدارة المطعم (صفحة منفصلة)</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 مطعم بيتزا أولاد الشيخ (إمبابة) - جميع الحقوق محفوظة.</p>
+        <p style="font-size: 11.5px; color: #71717a; margin-top: 4px;">
+          الأسعار والعناصر في هذا الموقع نماذج تجريبية تتطلب اعتماد الإدارة | الطلب عبر واتساب معلق حتى تأكيد المطعم.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- النوافذ المنبثقة والسحب (Modals & Drawers) -->
+  <!-- ======================================================== -->
+
+  <!-- خلفية مظلمة لدرج السلة -->
+  <div id="drawer-backdrop" class="modal-backdrop" style="z-index: 1090;"></div>
+
+  <!-- درج عربة التسوق (Cart Slide-over Drawer) -->
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-shopping-bag" style="color: var(--primary); font-size: 20px;"></i>
+        <h3 style="font-size: 17px; font-weight: 800;">سلة طلباتك</h3>
+      </div>
+      <button id="close-cart-btn" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
+    </div>
+
+    <!-- مفتاح التبديل بين التوصيل والاستلام -->
+    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 8px;">
+      <button class="order-type-btn active" data-type="delivery" onclick="setOrderType('delivery')" style="flex: 1; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 700; border: 1px solid var(--border-color); background: var(--bg-card);">
+        <i class="fas fa-motorcycle"></i> توصيل منازل
+      </button>
+      <button class="order-type-btn" data-type="takeaway" onclick="setOrderType('takeaway')" style="flex: 1; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 700; border: 1px solid var(--border-color); background: var(--bg-card);">
+        <i class="fas fa-store"></i> استلام من الفرع
+      </button>
+    </div>
+
+    <!-- قائمة عناصر السلة -->
+    <div id="cart-items-container" class="cart-items-list">
+      <!-- يتم إدراج العناصر بواسطة app.js -->
+    </div>
+
+    <!-- ذيل السلة والفاتورة -->
+    <div id="cart-footer-content" class="cart-drawer-footer">
+      
+      <!-- مربع كود الخصم -->
+      <div class="coupon-box">
+        <input type="text" id="cart-coupon-input" placeholder="كود الخصم (مثال: SHEIKH10)">
+        <button type="button" onclick="applyCouponCode()">تطبيق</button>
+      </div>
+      <div id="coupon-applied-msg" style="font-size: 11.5px; color: #16a34a; font-weight: 700; display: none; margin-bottom: 6px;"></div>
+
+      <div class="bill-line">
+        <span>المجموع الفرعي:</span>
+        <strong id="cart-subtotal">0 ج.م</strong>
+      </div>
+      <div class="bill-line" id="cart-discount-row" style="display: none; color: #16a34a;">
+        <span>خصم الكوبون:</span>
+        <strong id="cart-discount-fee">-0 ج.م</strong>
+      </div>
+      <div class="bill-line">
+        <span>رسوم التوصيل:</span>
+        <strong id="cart-delivery-fee">20 ج.م</strong>
+      </div>
+      <div class="bill-line total">
+        <span>الإجمالي النهائي:</span>
+        <strong id="cart-total">0 ج.م</strong>
+      </div>
+      <button class="btn-checkout" onclick="openCheckoutModal()">
+        <span>متابعة إتمام الطلب</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <button onclick="clearCart()" style="width: 100%; margin-top: 8px; background: none; color: #ef4444; font-size: 12.5px; font-weight: 700; padding: 6px;">
+        <i class="fas fa-trash-alt"></i> إفراغ السلة
+      </button>
+    </div>
+  </aside>
+
+  <!-- نافذة تخصيص المنتج (Product Customization Modal) -->
+  <div id="product-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <img id="modal-img" src="" alt="صورة المنتج">
+        <button class="modal-close-btn" onclick="closeProductModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- إشعار العينة التجريبية -->
+        <div id="modal-sample-badge" class="unverified-badge" style="display: none; margin-bottom: 12px;"></div>
+
+        <h3 id="modal-title" class="modal-title"></h3>
+        <p id="modal-desc" class="modal-desc"></p>
+
+        <!-- قسم اختيار الحجم -->
+        <div id="modal-sizes-container">
+          <h4 class="modal-section-title"><i class="fas fa-layer-group"></i> اختر الحجم المطلوب:</h4>
+          <div id="modal-sizes-list" class="radio-group-cards"></div>
+        </div>
+
+        <!-- قسم الإضافات -->
+        <div id="modal-extras-container" style="margin-top: 14px;">
+          <h4 class="modal-section-title"><i class="fas fa-cheese"></i> إضافات اختيارية:</h4>
+          <div id="modal-extras-list" class="checkbox-group-cards"></div>
+        </div>
+
+        <!-- ملاحظات خاصة -->
+        <div style="margin-top: 14px;">
+          <h4 class="modal-section-title"><i class="fas fa-comment-alt"></i> ملاحظات خاصة على الطلب:</h4>
+          <textarea id="modal-notes" rows="2" placeholder="مثال: بدون بصل، زيادة صوص كاتشب، تسوية مقرمشة..." style="width: 100%; resize: none;"></textarea>
+        </div>
+
+        <!-- الكمية -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <span style="font-weight: 800; font-size: 14px;">الكمية:</span>
+          <div class="qty-counter">
+            <button class="qty-btn" onclick="changeModalQty(-1)">-</button>
+            <span id="modal-qty-val" style="font-weight: 800; min-width: 20px; text-align: center;">1</span>
+            <button class="qty-btn" onclick="changeModalQty(1)">+</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">السعر الإجمالي</div>
+          <div id="modal-total-price" style="font-size: 20px; font-weight: 900; color: var(--primary);">0 ج.م</div>
+        </div>
+        <button class="btn-primary" onclick="addModalItemToCart()">
+          <i class="fas fa-cart-plus"></i>
+          <span>إضافة للسلة</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إتمام الطلب والدفع (Checkout Modal) -->
+  <div id="checkout-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 520px;">
+      <div style="padding: 18px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; font-weight: 800;">إتمام الطلب وتأكيد التوصيل</h3>
+        <button onclick="closeCheckoutModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 20px;">
+        
+        <!-- صندوق التنبيه الهام -->
+        <div class="notice-box">
+          <i class="fas fa-shield-alt"></i>
+          <strong>تنبيه هام للعميل:</strong>
+          سيتم توليد رسالة رسمية تفصيلية بطلبك وإرسالها مباشرة لواتساب إدارة مطعم بيتزا أولاد الشيخ. الطلب يظل قيد التأكيد حتى يرد فريق المطعم بتأكيد الاستلام ووقت التوصيل.
+        </div>
+
+        <!-- الاسم -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px;">اسم العميل بالكامل *</label>
+          <input type="text" id="checkout-name" placeholder="مثال: محمد أحمد" style="width: 100%;" required>
+        </div>
+
+        <!-- رقم الهاتف -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px;">رقم الهاتف المحمول (مصر - 11 رقماً) *</label>
+          <input type="tel" id="checkout-phone" placeholder="مثال: 01112962692" style="width: 100%;" required>
+        </div>
+
+        <!-- حقول عنوان التوصيل -->
+        <div id="checkout-delivery-address-group">
+          <!-- المنطقة -->
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px;">المنطقة / الحي (إمبابة وضواحيها) *</label>
+            <select id="checkout-area" style="width: 100%;"></select>
+          </div>
+
+          <!-- تفاصيل العنوان -->
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px;">تفاصيل العنوان (الشارع، رقم العمارة، رقم الشقة أو علامة مميزة) *</label>
+            <textarea id="checkout-address" rows="2" placeholder="مثال: شارع الوحدة بجوار مسجد الرحمن، عمارة 15 الدور الثالث شقة 6" style="width: 100%; resize: none;"></textarea>
+          </div>
+
+          <!-- مشاركة موقع GPS عبر الأقمار الصناعية -->
+          <div style="margin-bottom: 14px; background: var(--bg-card-alt); padding: 10px; border-radius: var(--radius-sm); border: 1px dashed var(--border-color);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 12.5px; font-weight: 700;"><i class="fas fa-map-pin" style="color: var(--primary);"></i> مشاركة موقعك عبر GPS (اختياري)</span>
+              <button type="button" onclick="captureCustomerLocation()" style="background-color: var(--primary); color: white; padding: 4px 10px; border-radius: 4px; font-size: 11.5px; font-weight: 700;">
+                <i class="fas fa-crosshairs"></i> تحديد موقعي
+              </button>
+            </div>
+            <div id="gps-status" style="font-size: 11.5px; margin-top: 6px;">اضغط على الزر لتحديد موقعك بدقة وتسريع التوصيل.</div>
+          </div>
+        </div>
+
+        <!-- طريقة الدفع -->
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">طريقة الدفع المتاحة:</label>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="option-card-label" style="display: flex; align-items: center; gap: 8px;">
+              <input type="radio" name="payment_method" value="الدفع كاش عند الاستلام" checked>
+              <span style="font-size: 13px;">الدفع نقداً عند الاستلام (كاش)</span>
+            </label>
+            <label class="option-card-label" style="display: flex; align-items: center; gap: 8px;">
+              <input type="radio" name="payment_method" value="فودافون كاش / إنستاباي">
+              <span style="font-size: 13px;">تحويل فودافون كاش أو إنستاباي (عند التأكيد مع المطعم)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- تعليمات إضافية للمطعم أو الطيار -->
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px;">ملاحظات إضافية للتوصيل:</label>
+          <input type="text" id="checkout-instructions" placeholder="مثال: يرجى عدم الاتصال بالهاتف ورن الجرس فقط" style="width: 100%;">
+        </div>
+
+        <!-- ملخص الحساب -->
+        <div style="background: var(--bg-card-alt); border-radius: var(--radius-sm); padding: 12px; border: 1px solid var(--border-color);">
+          <div class="bill-line" style="margin-bottom: 4px;">
+            <span style="font-size: 12.5px;">المجموع:</span>
+            <strong id="checkout-subtotal">0 ج.م</strong>
+          </div>
+          <div class="bill-line" id="checkout-discount-row" style="display: none; color: #16a34a; margin-bottom: 4px;">
+            <span style="font-size: 12.5px;">الخصم:</span>
+            <strong id="checkout-discount-fee">-0 ج.م</strong>
+          </div>
+          <div class="bill-line" style="margin-bottom: 4px;">
+            <span style="font-size: 12.5px;">رسوم التوصيل:</span>
+            <strong id="checkout-delivery-fee">20 ج.م</strong>
+          </div>
+          <div class="bill-line total" style="margin-top: 6px; padding-top: 6px; font-size: 16px;">
+            <span>المبلغ الإجمالي:</span>
+            <strong id="checkout-total" style="color: var(--primary);">0 ج.م</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="padding: 16px 20px;">
+        <button onclick="closeCheckoutModal()" style="background: var(--bg-card-alt); color: var(--text-main); padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 700; font-size: 13.5px;">
+          إلغاء
+        </button>
+        <button onclick="submitOrderToWhatsApp()" style="background-color: var(--whatsapp); color: white; padding: 10px 22px; border-radius: var(--radius-sm); font-weight: 800; font-size: 14.5px; display: flex; align-items: center; gap: 8px;">
+          <i class="fab fa-whatsapp" style="font-size: 18px;"></i>
+          <span>إرسال الطلب عبر واتساب</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة نجاح إرسال الطلب (Order Success Modal) -->
+  <div id="order-success-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 460px; text-align: center; padding: 25px;">
+      <div style="width: 65px; height: 65px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">
+        <i class="fas fa-check"></i>
+      </div>
+      <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 6px;">تم إرسال الطلب بنجاح!</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+        تم فتح تطبيق واتساب وإرسال تفاصيل طلبك لإدارة مطعم بيتزا أولاد الشيخ.
+      </p>
+
+      <div style="background: var(--bg-card-alt); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid var(--border-color); text-align: right;">
+        <div style="font-size: 13px; margin-bottom: 6px;">رقم الطلب: <strong id="success-order-ref" style="color: var(--primary);"></strong></div>
+        <div style="font-size: 13px; margin-bottom: 6px;">الإجمالي: <strong id="success-order-total"></strong></div>
+        <div style="font-size: 12.5px; color: #d97706; font-weight: 700;">
+          <i class="fas fa-clock"></i> الحالة: معلق بانتظار رد وتأكيد المطعم
+        </div>
+      </div>
+
+      <div class="notice-box" style="text-align: right; font-size: 12px;">
+        يرجى متابعة محادثة الواتساب مع المطعم للتأكد من وقت وصول التوصيل أو الاستلام. في حال التأخر يمكنك الاتصال مباشرة على <strong>01112962692</strong>.
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="success-reopen-wa" style="flex: 1; background: var(--whatsapp); color: white; padding: 10px; border-radius: var(--radius-sm); font-weight: 700; font-size: 13.5px;">
+          <i class="fab fa-whatsapp"></i> فتح المحادثة مجدداً
+        </button>
+        <button onclick="closeOrderSuccessModal()" style="flex: 1; background: var(--primary); color: white; padding: 10px; border-radius: var(--radius-sm); font-weight: 700; font-size: 13.5px;">
+          العودة للموقع
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة لوحة تحكم الإدارة (Admin Dashboard Modal) -->
+  <div id="admin-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 720px;">
+      
+      <!-- شاشة تسجيل دخول الإدارة -->
+      <div id="admin-login-view" style="padding: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="font-size: 19px; font-weight: 900;"><i class="fas fa-lock" style="color: var(--primary);"></i> تسجيل دخول إدارة المطعم</h3>
+          <button onclick="closeAdminModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
+        </div>
+        <form onsubmit="handleAdminLogin(event)">
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">اسم المستخدم</label>
+            <input type="text" id="admin-username" value="admin" style="width: 100%;" required>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">كلمة المرور</label>
+            <input type="password" id="admin-password" value="AdminPassword123!" style="width: 100%;" required>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">الافتراضي للتجربة: admin / AdminPassword123!</div>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>دخول لوحة التحكم</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- شاشة لوحة تحكم الإدارة بعد تسجيل الدخول -->
+      <div id="admin-dashboard-view" style="display: none;">
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+              <h4 style="font-weight: 900; font-size: 15px;">لوحة إدارة مطعم بيتزا أولاد الشيخ</h4>
+              <span style="font-size: 11px; color: var(--text-muted);">تحكم كامل في الأسعار، العينات، والطلبات</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="handleAdminLogout()" style="background: none; color: #ef4444; font-size: 13px; font-weight: 700; padding: 4px 8px;">
+              <i class="fas fa-sign-out-alt"></i> خروج
+            </button>
+            <button onclick="closeAdminModal()" style="background: none; font-size: 20px; color: var(--text-muted);">&times;</button>
+          </div>
+        </div>
+
+        <!-- ألسنة التبويب -->
+        <div class="admin-tabs">
+          <button class="admin-tab-btn active" data-tab="products" onclick="switchAdminTab('products')">
+            <i class="fas fa-pizza-slice"></i> المنتجات والأسعار
+          </button>
+          <button class="admin-tab-btn" data-tab="orders" onclick="switchAdminTab('orders')">
+            <i class="fas fa-clipboard-list"></i> سجل الطلبات
+          </button>
+          <button class="admin-tab-btn" data-tab="settings" onclick="switchAdminTab('settings')">
+            <i class="fas fa-cog"></i> إعدادات المطعم
+          </button>
+        </div>
+
+        <!-- محتوى التبويبات -->
+        <div class="admin-content-pane">
+          
+          <!-- تبويب المنتجات والأسعار -->
+          <div id="tab-products" class="admin-tab-pane active" style="display: block;">
+            <div class="notice-box" style="margin-bottom: 14px;">
+              <i class="fas fa-info-circle"></i> يمكنك تعديل الأسعار، وتغيير حالة الصنف بين (عينة تجريبية / معتمد رسمي)، وتفعيل أو تعطيل التوفر مباشرة.
+            </div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                  <tr style="background: var(--bg-card-alt); text-align: right;">
+                    <th style="padding: 10px;">الصورة</th>
+                    <th style="padding: 10px;">اسم الصنف</th>
+                    <th style="padding: 10px;">السعر الأساسي</th>
+                    <th style="padding: 10px;">حالة الاعتماد</th>
+                    <th style="padding: 10px;">التوفر</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-products-table-body">
+                  <!-- يتم إدراجه ديناميكياً -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- تبويب الطلبات -->
+          <div id="tab-orders" class="admin-tab-pane" style="display: none;">
+            <h4 style="font-weight: 800; margin-bottom: 12px; font-size: 14px;">الطلبات الواردة للمطعم:</h4>
+            <div id="admin-orders-list">
+              <!-- يتم إدراجه ديناميكياً -->
+            </div>
+          </div>
+
+          <!-- تبويب إعدادات المطعم -->
+          <div id="tab-settings" class="admin-tab-pane" style="display: none;">
+            <form onsubmit="saveAdminSettings(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                <div>
+                  <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">رقم هاتف الاتصال</label>
+                  <input type="text" id="setting-phone" style="width: 100%;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">رقم الواتساب (بالكود الدولي دون +)</label>
+                  <input type="text" id="setting-whatsapp" style="width: 100%;">
+                </div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">العنوان الرسمي للمطعم</label>
+                <input type="text" id="setting-address" style="width: 100%;">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                <div>
+                  <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">رسوم التوصيل الافتراضية (ج.م)</label>
+                  <input type="number" id="setting-delivery-fee" style="width: 100%;">
+                </div>
+              </div>
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">نص الشريط الإعلاني العلوي</label>
+                <input type="text" id="setting-announcement" style="width: 100%;">
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">
+                <i class="fas fa-save"></i>
+                <span>حفظ التعديلات</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
