@@ -117,12 +117,16 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   justify-content: space-between;
   height: 72px;
+  position: relative;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
   gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .brand-icon {
@@ -136,6 +140,14 @@ input:focus, select:focus, textarea:focus {
   justify-content: center;
   font-size: 22px;
   box-shadow: 0 4px 10px rgba(198, 40, 40, 0.35);
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
 }
 
 .brand-text h1 {
@@ -143,12 +155,15 @@ input:focus, select:focus, textarea:focus {
   font-weight: 900;
   color: var(--primary);
   line-height: 1.2;
+  white-space: nowrap;
+  margin: 0;
 }
 
 .brand-text span {
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -176,6 +191,7 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-icon {
@@ -188,6 +204,7 @@ input:focus, select:focus, textarea:focus {
   background-color: var(--bg-card-alt);
   color: var(--text-main);
   font-size: 15px;
+  flex-shrink: 0;
 }
 
 .btn-icon:hover {
@@ -205,6 +222,7 @@ input:focus, select:focus, textarea:focus {
   font-weight: 800;
   font-size: 14px;
   box-shadow: 0 4px 14px rgba(198, 40, 40, 0.35);
+  flex-shrink: 0;
 }
 
 .btn-cart-nav:hover {
@@ -1223,22 +1241,152 @@ input:focus, select:focus, textarea:focus {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .navbar {
-    height: 62px;
+  .container {
+    padding: 0 12px;
   }
+
+  .top-announcement {
+    font-size: 11.5px;
+    padding: 6px 12px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .top-announcement i {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .navbar {
+    height: 58px;
+    min-height: 58px;
+    padding: 0;
+  }
+
+  .brand-logo {
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .brand-text h1 {
+    font-size: 15px;
+    font-weight: 800;
+    white-space: nowrap;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .brand-text span {
+    display: none; /* إخفاء النص الإنجليزي في الشاشات الصغيرة لتجنب الالتفاف والازدحام */
+  }
+
   .nav-links {
     display: none;
   }
-  .hero-title {
-    font-size: 30px;
+
+  .nav-actions {
+    gap: 6px;
+    flex-shrink: 0;
   }
-  .hero-subtitle {
-    font-size: 15px;
+
+  .btn-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+    flex-shrink: 0;
   }
+
+  .btn-cart-nav {
+    padding: 6px 10px;
+    gap: 5px;
+    font-size: 13px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
   .btn-cart-nav span.cart-text {
     display: none;
   }
+
+  .cart-badge {
+    padding: 1px 6px;
+    font-size: 11px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-subtitle {
+    font-size: 14.5px;
+  }
+
   .cart-drawer {
     max-width: 100%;
+  }
+}
+
+/* الشاشات الصغيرة جداً (أقل من 380px) */
+@media (max-width: 380px) {
+  .container {
+    padding: 0 8px;
+  }
+
+  .top-announcement {
+    font-size: 10.5px;
+    padding: 5px 8px;
+  }
+
+  .navbar {
+    height: 54px;
+    min-height: 54px;
+  }
+
+  .brand-logo {
+    gap: 6px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .brand-text h1 {
+    font-size: 13.5px;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .btn-cart-nav {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .cart-badge {
+    padding: 1px 5px;
+    font-size: 10px;
   }
 }
