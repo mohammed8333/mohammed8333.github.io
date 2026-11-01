@@ -204,17 +204,19 @@ function loadAdminData() {
     adminState.coupons = [...DEFAULT_COUPONS];
   }
 
-  // تحميل الطلبات (مع عينات افتراضية مبدئية إذا كانت القائمة فارغة)
+  // تحميل الطلبات (الحفاظ الدائم على تعديلات وحذف المستخدم حتى مع عمل Refresh)
   const savedOrders = localStorage.getItem('alsheikh_orders');
-  if (savedOrders) {
+  if (savedOrders !== null) {
     try {
       const parsed = JSON.parse(savedOrders);
-      adminState.orders = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...DEFAULT_ORDERS];
+      adminState.orders = Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      adminState.orders = [...DEFAULT_ORDERS];
+      adminState.orders = [];
     }
   } else {
-    adminState.orders = [...DEFAULT_ORDERS];
+    // في حال عدم وجود أي سجل مسبقاً (زيارة جديدة تماماً)، يبدأ السجل نظيفاً وفارغاً
+    adminState.orders = [];
+    localStorage.setItem('alsheikh_orders', '[]');
   }
 
   // تحميل الإعدادات
@@ -378,11 +380,21 @@ function renderOrdersTable() {
   }
 
   if (filtered.length === 0) {
+    const isSearchingOrFiltering = adminState.ordersFilter !== 'all' || adminState.ordersSearch;
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--admin-text-muted); background: var(--admin-card-bg); border-radius: var(--radius-md); border: 1px dashed var(--admin-border);">
-        <i class="fas fa-clipboard-list" style="font-size: 44px; margin-bottom: 12px; opacity: 0.35;"></i>
-        <h4 style="font-size: 15px; font-weight: 800; color: var(--admin-text-main); margin-bottom: 6px;">لا توجد طلبات تطابق هذا التصنيف</h4>
-        <p style="font-size: 12.5px;">جرّب اختيار تصنيف آخر من الأعلى أو مسح كلمة البحث.</p>
+        <i class="fas fa-clipboard-check" style="font-size: 44px; margin-bottom: 12px; opacity: 0.35;"></i>
+        <h4 style="font-size: 15px; font-weight: 800; color: var(--admin-text-main); margin-bottom: 6px;">
+          ${isSearchingOrFiltering ? 'لا توجد طلبات تطابق هذا التصنيف' : 'لا توجد طلبات واردة حالياً'}
+        </h4>
+        <p style="font-size: 12.5px; margin-bottom: 14px;">
+          ${isSearchingOrFiltering ? 'جرّب اختيار تصنيف آخر من الأعلى أو مسح كلمة البحث.' : 'سجل الطلبات فارغ، ستظهر الطلبات الجديدة هنا مباشرة عند قيام العملاء بالطلب من الموقع.'}
+        </p>
+        ${!isSearchingOrFiltering ? `
+          <button class="btn-admin-action ghost" onclick="addSampleOrder()" style="font-size: 12px; margin: 0 auto; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-plus-circle"></i> إضافة طلب تجريبي للاختبار
+          </button>
+        ` : ''}
       </div>
     `;
     return;
@@ -563,8 +575,44 @@ function deleteOrder(orderRef) {
     adminState.orders = adminState.orders.filter(o => o.orderRef !== orderRef);
     saveOrders();
     renderOrdersTable();
-    showToast('تم حذف الطلب بنجاح.');
+    showToast('تم حذف الطلب بنجاح ولن يظهر مجدداً.');
   }
+}
+
+function clearAllOrders() {
+  if (!adminState.orders || adminState.orders.length === 0) {
+    showToast('سجل الطلبات فارغ بالفعل.');
+    return;
+  }
+  if (confirm('هل أنت متأكد من مسح وتفريغ جميع الطلبات نهائياً من السجل؟')) {
+    adminState.orders = [];
+    saveOrders();
+    renderOrdersTable();
+    showToast('تم مسح جميع الطلبات بنجاح ولن تعود عند التحديث.');
+  }
+}
+
+function addSampleOrder() {
+  const sample = {
+    orderRef: '#ORD-' + Math.floor(1000 + Math.random() * 9000),
+    customerName: 'عميل تجريبي',
+    customerPhone: '01112962692',
+    orderType: 'delivery',
+    address: 'شارع الوحدة الرئيسي، إمبابة، الجيزة',
+    area: 'إمبابة',
+    createdAt: new Date().toISOString(),
+    status: 'Pending',
+    items: [
+      { name: 'بيتزا سوبر سوبريم', size: 'وسط (28 سم)', quantity: 1, price: 130, extras: 'إكسترا جبنة' }
+    ],
+    total: 150,
+    paymentMethod: 'الدفع عند الاستلام (كاش)',
+    notes: 'طلب تجريبي لتجربة لوحة التحكم'
+  };
+  adminState.orders.unshift(sample);
+  saveOrders();
+  renderOrdersTable();
+  showToast('تمت إضافة طلب تجريبي جديد.');
 }
 
 function filterOrdersByStatus(status) {
