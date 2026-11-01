@@ -26,19 +26,21 @@ const state = {
 // ==========================================
 // 1. تهيئة التطبيق عند تحميل الصفحة
 // ==========================================
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initLanguage();
   loadSettings();
   loadOffers();
   loadCoupons();
-  await loadProducts();
+  loadProductsSync();
   renderOffers();
   renderCategories();
   renderProducts();
   updateCartUI();
   setupEventListeners();
   renderDeliveryAreas();
+  // فحص الـ API في الخلفية بدون حجب واجهة المستخدم
+  checkApiProductsInBackground();
 });
 
 // تهيئة الوضع الليلي / النهاري
@@ -130,30 +132,37 @@ function loadCoupons() {
   }
 }
 
-// تحميل المنتجات (محاولة من الـ API مع fallback للتخزين المحلي)
-async function loadProducts() {
-  try {
-    const res = await fetch('/api/products');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        state.products = data;
-        return;
-      }
-    }
-  } catch (err) {
-    // API غير متصل، نستخدم البيانات الافتراضية
-  }
-
+// تحميل المنتجات فورياً وبشكل متزامن لسرعة الإقلاع على الموبايل
+function loadProductsSync() {
   const savedProducts = localStorage.getItem('alsheikh_products');
   if (savedProducts) {
     try {
       state.products = JSON.parse(savedProducts);
+      return;
     } catch (e) {
       state.products = [...DEFAULT_PRODUCTS];
     }
   } else {
     state.products = [...DEFAULT_PRODUCTS];
+  }
+}
+
+// فحص اختياري للـ API في الخلفية بدون تأخير فتح الصفحة
+async function checkApiProductsInBackground() {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch('/api/products', { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        state.products = data;
+        renderProducts();
+      }
+    }
+  } catch (err) {
+    // يعمل على وضع Offline / GitHub Pages
   }
 }
 
