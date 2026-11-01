@@ -99,6 +99,11 @@
           <span>قائمة الطعام والأسعار</span>
         </button>
 
+        <button class="nav-item-btn" data-view="categories" onclick="switchAdminView('categories')">
+          <i class="fas fa-tags"></i>
+          <span>إدارة التصنيفات</span>
+        </button>
+
         <button class="nav-item-btn" data-view="offers" onclick="switchAdminView('offers')">
           <i class="fas fa-percent"></i>
           <span>العروض والخصومات</span>
@@ -225,6 +230,11 @@
                   <span>إضافة صنف جديد</span>
                 </button>
 
+                <button class="btn-admin-action ghost" onclick="switchAdminView('categories')">
+                  <i class="fas fa-tags"></i>
+                  <span>إدارة التصنيفات</span>
+                </button>
+
                 <div style="position: relative; width: 200px;">
                   <i class="fas fa-search" style="position: absolute; top: 50%; transform: translateY(-50%); right: 12px; color: var(--admin-text-muted);"></i>
                   <input type="text" id="products-search-input" class="form-control" placeholder="بحث في المنيو..." style="padding-right: 34px; font-size: 13px;">
@@ -265,7 +275,37 @@
         </section>
 
         <!-- ========================================== -->
-        <!-- 3. مشهد العروض والخصومات (Offers View) -->
+        <!-- 2.5. مشهد إدارة التصنيفات (Categories View) -->
+        <!-- ========================================== -->
+        <section id="view-categories" class="admin-view-pane">
+          
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <div class="admin-card-title">
+                  <i class="fas fa-tags" style="color: var(--admin-primary);"></i>
+                  <span>إدارة وتخصيص تصنيفات المنيو</span>
+                </div>
+                <p style="font-size: 12.5px; color: var(--admin-text-muted); margin-top: 4px;">
+                  التحكم الكامل في أقسام وقوائم الطعام وتعديل أسمائها أو إضافة أقسام جديدة بأيقونات مميزة تظهر فوراً للعملاء
+                </p>
+              </div>
+
+              <div class="toolbar-group">
+                <button class="btn-admin-action primary" onclick="openAddCategoryModal()">
+                  <i class="fas fa-plus"></i>
+                  <span>إضافة تصنيف جديد</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- شبكة كروت التصنيفات الذكية -->
+            <div id="categories-cards-container" class="categories-cards-grid">
+              <!-- يتم إدراج كروت التصنيفات ديناميكياً بواسطة admin.js -->
+            </div>
+          </div>
+
+        </section>
         <!-- ========================================== -->
         <section id="view-offers" class="admin-view-pane">
           
@@ -533,6 +573,52 @@
   <!-- 6. النوافذ المنبثقة للتعديل والإضافة (Modals) -->
   <!-- ======================================================== -->
   
+  <!-- نافذة إضافة وتعديل تصنيف -->
+  <div id="modal-category" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2500; padding: 20px;">
+    <div style="background: var(--admin-card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 24px; border: 1px solid var(--admin-border); box-shadow: var(--shadow-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--admin-border); padding-bottom: 12px;">
+        <h3 id="modal-category-title" style="font-size: 17px; font-weight: 800;"><i class="fas fa-tags" style="color: var(--admin-primary);"></i> إضافة تصنيف جديد</h3>
+        <button type="button" onclick="closeCategoryModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--admin-text-muted);">&times;</button>
+      </div>
+
+      <form id="form-category" onsubmit="handleSaveCategory(event)">
+        <input type="hidden" id="form-category-id">
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label">اسم التصنيف (بالعربية) *</label>
+          <input type="text" id="form-category-name-ar" class="form-control" placeholder="مثال: مكرونات وباستا" required>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label">اسم التصنيف (بالإنجليزية) - اختياري</label>
+          <input type="text" id="form-category-name-en" class="form-control" placeholder="مثال: Pasta & Noodles">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">أيقونة التصنيف *</label>
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+            <div id="category-icon-preview" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(198, 40, 40, 0.1); color: var(--admin-primary); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid var(--admin-border); flex-shrink: 0;">
+              <i class="fas fa-pizza-slice"></i>
+            </div>
+            <input type="text" id="form-category-icon" class="form-control" placeholder="رمز الأيقونة (مثال: fa-pizza-slice)" value="fa-pizza-slice" oninput="updateCategoryIconPreview(this.value)" required>
+          </div>
+
+          <label class="form-label" style="font-size: 11.5px; color: var(--admin-text-muted); margin-bottom: 6px;">أو اختر أيقونة سريعة بنقرة واحدة:</label>
+          <div class="quick-icons-grid" id="quick-icons-picker">
+            <!-- أزرار الأيقونات السريعة -->
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--admin-border); padding-top: 14px; margin-top: 10px;">
+          <button type="button" class="btn-admin-action ghost" onclick="closeCategoryModal()">إلغاء</button>
+          <button type="submit" class="btn-admin-action primary">
+            <i class="fas fa-save"></i> حفظ التصنيف
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- نافذة إضافة وتعديل صنف -->
   <div id="product-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2500; padding: 20px;">
     <div style="background: var(--admin-card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 24px; border: 1px solid var(--admin-border); box-shadow: var(--shadow-lg);">

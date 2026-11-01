@@ -28,6 +28,7 @@ const adminState = {
 document.addEventListener('DOMContentLoaded', () => {
   initAdminTheme();
   loadAdminData();
+  populateCategoryDropdowns();
   checkAuth();
   setupAdminListeners();
 });
@@ -204,6 +205,19 @@ function loadAdminData() {
     adminState.coupons = [...DEFAULT_COUPONS];
   }
 
+  // تحميل التصنيفات
+  const savedCategories = localStorage.getItem('alsheikh_categories');
+  if (savedCategories) {
+    try {
+      const parsedCats = JSON.parse(savedCategories);
+      adminState.categories = Array.isArray(parsedCats) && parsedCats.length > 0 ? parsedCats : [...DEFAULT_CATEGORIES];
+    } catch (e) {
+      adminState.categories = [...DEFAULT_CATEGORIES];
+    }
+  } else {
+    adminState.categories = [...DEFAULT_CATEGORIES];
+  }
+
   // تحميل الطلبات (الحفاظ الدائم على تعديلات وحذف المستخدم حتى مع عمل Refresh)
   const savedOrders = localStorage.getItem('alsheikh_orders');
   if (savedOrders !== null) {
@@ -235,6 +249,13 @@ function loadAdminData() {
 function saveProducts() {
   localStorage.setItem('alsheikh_products', JSON.stringify(adminState.products));
   updateDashboardStats();
+}
+
+function saveCategories() {
+  localStorage.setItem('alsheikh_categories', JSON.stringify(adminState.categories));
+  populateCategoryDropdowns();
+  renderCategoriesView();
+  renderProductsTable();
 }
 
 function saveOffers() {
@@ -277,6 +298,7 @@ function switchAdminView(viewName) {
     overview: 'نظرة عامة وإحصائيات المطعم',
     orders: 'إدارة ومتابعة طلبات العملاء',
     products: 'إدارة قائمة الطعام والأسعار',
+    categories: 'إدارة وتخصيص تصنيفات المنيو',
     offers: 'إدارة العروض والخصومات والكوبونات',
     settings: 'إعدادات المطعم وبيانات الاتصال'
   };
@@ -287,6 +309,7 @@ function switchAdminView(viewName) {
   if (viewName === 'overview') renderOverviewStats();
   if (viewName === 'orders') renderOrdersTable();
   if (viewName === 'products') renderProductsTable();
+  if (viewName === 'categories') renderCategoriesView();
   if (viewName === 'offers') {
     renderAdminOffers();
     renderAdminCoupons();
@@ -738,11 +761,12 @@ function deleteProduct(prodId) {
 
 // نافذة تعديل / إضافة منتج
 function openAddProductModal() {
+  populateCategoryDropdowns();
   adminState.editingProduct = null;
   document.getElementById('modal-product-title').textContent = 'إضافة صنف جديد للقائمة';
   document.getElementById('form-product-name-ar').value = '';
   document.getElementById('form-product-name-en').value = '';
-  document.getElementById('form-product-cat').value = 'cat-1';
+  document.getElementById('form-product-cat').value = adminState.categories[0]?.id || 'cat-1';
   document.getElementById('form-product-price').value = '100';
   document.getElementById('form-product-desc-ar').value = '';
   document.getElementById('form-product-img').value = '';
@@ -753,6 +777,7 @@ function openAddProductModal() {
 }
 
 function openEditProductModal(prodId) {
+  populateCategoryDropdowns();
   const p = adminState.products.find(item => item.id === prodId);
   if (!p) return;
 
@@ -760,7 +785,7 @@ function openEditProductModal(prodId) {
   document.getElementById('modal-product-title').textContent = `تعديل صنف: ${p.nameAr}`;
   document.getElementById('form-product-name-ar').value = p.nameAr || '';
   document.getElementById('form-product-name-en').value = p.nameEn || '';
-  document.getElementById('form-product-cat').value = p.categoryId || 'cat-1';
+  document.getElementById('form-product-cat').value = p.categoryId || (adminState.categories[0]?.id || 'cat-1');
   document.getElementById('form-product-price').value = p.basePrice || 0;
   document.getElementById('form-product-desc-ar').value = p.descriptionAr || '';
   document.getElementById('form-product-img').value = p.imageUrl || '';
@@ -832,6 +857,222 @@ function handleSaveProduct(e) {
   saveProducts();
   renderProductsTable();
   closeProductEditModal();
+}
+
+// ==========================================
+// 6.0 إدارة وتخصيص التصنيفات (Categories Management)
+// ==========================================
+const QUICK_CATEGORY_ICONS = [
+  { icon: 'fa-pizza-slice', label: 'بيتزا' },
+  { icon: 'fa-bread-slice', label: 'كريب' },
+  { icon: 'fa-burger', label: 'برجر' },
+  { icon: 'fa-hotdog', label: 'سندوتشات' },
+  { icon: 'fa-drumstick-bite', label: 'حواوشي/دجاج' },
+  { icon: 'fa-pie-chart', label: 'فطير' },
+  { icon: 'fa-plate-wheat', label: 'باستا/مكرونة' },
+  { icon: 'fa-bowl-food', label: 'أطباق ومقبلات' },
+  { icon: 'fa-bottle-water', label: 'مشروبات' },
+  { icon: 'fa-fire', label: 'سبايسي' },
+  { icon: 'fa-ice-cream', label: 'حلويات' },
+  { icon: 'fa-tag', label: 'تصنيف عام' }
+];
+
+function populateCategoryDropdowns() {
+  const filterSelect = document.getElementById('products-category-filter');
+  if (filterSelect) {
+    const currentVal = filterSelect.value || 'all';
+    let optionsHtml = '<option value="all">كل التصنيفات</option>';
+    adminState.categories.forEach(cat => {
+      optionsHtml += `<option value="${cat.id}" ${currentVal === cat.id ? 'selected' : ''}>${cat.nameAr}</option>`;
+    });
+    filterSelect.innerHTML = optionsHtml;
+  }
+
+  const formProdCat = document.getElementById('form-product-cat');
+  if (formProdCat) {
+    const currentVal = formProdCat.value;
+    let optionsHtml = '';
+    adminState.categories.forEach(cat => {
+      optionsHtml += `<option value="${cat.id}" ${currentVal === cat.id ? 'selected' : ''}>${cat.nameAr}</option>`;
+    });
+    formProdCat.innerHTML = optionsHtml;
+  }
+}
+
+function renderCategoriesView() {
+  const container = document.getElementById('categories-cards-container');
+  if (!container) return;
+
+  if (adminState.categories.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--admin-text-muted); background: var(--admin-card-bg); border-radius: var(--radius-md); border: 1px dashed var(--admin-border);">
+        <i class="fas fa-tags" style="font-size: 44px; margin-bottom: 12px; opacity: 0.35;"></i>
+        <h4 style="font-size: 15px; font-weight: 800; color: var(--admin-text-main); margin-bottom: 6px;">لا توجد أي تصنيفات حالياً</h4>
+        <p style="font-size: 12.5px; margin-bottom: 14px;">أضف تصنيفاً جديداً لتنظيم أقسام المنيو وتسهيل تصفح العملاء.</p>
+        <button class="btn-admin-action primary" onclick="openAddCategoryModal()">
+          <i class="fas fa-plus"></i> إضافة تصنيف جديد
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = adminState.categories.map(cat => {
+    const productCount = adminState.products.filter(p => p.categoryId === cat.id).length;
+
+    return `
+      <div class="category-card" data-id="${cat.id}">
+        <div class="category-card-header">
+          <div class="category-card-icon">
+            <i class="fas ${cat.icon || 'fa-tag'}"></i>
+          </div>
+          <div class="category-card-info">
+            <div class="category-card-name-ar">${cat.nameAr}</div>
+            <div class="category-card-name-en">${cat.nameEn || '—'}</div>
+          </div>
+        </div>
+
+        <div class="category-card-meta">
+          <span style="color: var(--admin-text-muted);"><i class="fas fa-utensils"></i> الأصناف المسجلة:</span>
+          <span style="font-weight: 800; color: var(--admin-primary);">${productCount} صنف</span>
+        </div>
+
+        <div class="category-card-actions">
+          <button class="btn-admin-action ghost" onclick="openEditCategoryModal('${cat.id}')" title="تعديل التصنيف">
+            <i class="fas fa-edit"></i> <span>تعديل</span>
+          </button>
+          <button class="btn-admin-action danger" onclick="deleteCategory('${cat.id}')" title="حذف التصنيف">
+            <i class="fas fa-trash-alt"></i> <span>حذف</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderQuickIconsPicker(selectedIcon) {
+  const container = document.getElementById('quick-icons-picker');
+  if (!container) return;
+
+  container.innerHTML = QUICK_CATEGORY_ICONS.map(item => `
+    <button type="button" class="quick-icon-btn ${item.icon === selectedIcon ? 'selected' : ''}" 
+      title="${item.label}" onclick="setCategoryIcon('${item.icon}')">
+      <i class="fas ${item.icon}"></i>
+    </button>
+  `).join('');
+}
+
+function setCategoryIcon(iconClass) {
+  const input = document.getElementById('form-category-icon');
+  if (input) {
+    input.value = iconClass;
+    updateCategoryIconPreview(iconClass);
+  }
+  document.querySelectorAll('.quick-icon-btn').forEach(btn => {
+    const iconEl = btn.querySelector('i');
+    btn.classList.toggle('selected', iconEl && iconEl.classList.contains(iconClass));
+  });
+}
+
+function updateCategoryIconPreview(iconClass) {
+  const preview = document.getElementById('category-icon-preview');
+  if (preview) {
+    preview.innerHTML = `<i class="fas ${iconClass || 'fa-tag'}"></i>`;
+  }
+}
+
+function openAddCategoryModal() {
+  document.getElementById('modal-category-title').innerHTML = '<i class="fas fa-plus-circle" style="color: var(--admin-primary);"></i> إضافة تصنيف جديد';
+  document.getElementById('form-category-id').value = '';
+  document.getElementById('form-category-name-ar').value = '';
+  document.getElementById('form-category-name-en').value = '';
+  document.getElementById('form-category-icon').value = 'fa-pizza-slice';
+  updateCategoryIconPreview('fa-pizza-slice');
+  renderQuickIconsPicker('fa-pizza-slice');
+  document.getElementById('modal-category').style.display = 'flex';
+}
+
+function openEditCategoryModal(catId) {
+  const cat = adminState.categories.find(c => c.id === catId);
+  if (!cat) return;
+
+  document.getElementById('modal-category-title').innerHTML = `<i class="fas fa-edit" style="color: var(--admin-primary);"></i> تعديل تصنيف: ${cat.nameAr}`;
+  document.getElementById('form-category-id').value = cat.id;
+  document.getElementById('form-category-name-ar').value = cat.nameAr;
+  document.getElementById('form-category-name-en').value = cat.nameEn || '';
+  const currentIcon = cat.icon || 'fa-tag';
+  document.getElementById('form-category-icon').value = currentIcon;
+  updateCategoryIconPreview(currentIcon);
+  renderQuickIconsPicker(currentIcon);
+  document.getElementById('modal-category').style.display = 'flex';
+}
+
+function closeCategoryModal() {
+  document.getElementById('modal-category').style.display = 'none';
+}
+
+function handleSaveCategory(e) {
+  e.preventDefault();
+  const id = document.getElementById('form-category-id').value;
+  const nameAr = document.getElementById('form-category-name-ar').value.trim();
+  const nameEn = document.getElementById('form-category-name-en').value.trim() || nameAr;
+  let icon = document.getElementById('form-category-icon').value.trim() || 'fa-tag';
+  if (!icon.startsWith('fa-')) icon = 'fa-' + icon;
+
+  if (!nameAr) {
+    alert('يرجى إدخال اسم التصنيف باللغة العربية.');
+    return;
+  }
+
+  if (id) {
+    // تعديل تصنيف حالي
+    const index = adminState.categories.findIndex(c => c.id === id);
+    if (index !== -1) {
+      adminState.categories[index] = {
+        ...adminState.categories[index],
+        nameAr,
+        nameEn,
+        icon
+      };
+      showToast(`تم تعديل تصنيف "${nameAr}" بنجاح.`);
+    }
+  } else {
+    // إضافة تصنيف جديد
+    const newId = 'cat-' + Date.now();
+    adminState.categories.push({
+      id: newId,
+      nameAr,
+      nameEn,
+      icon
+    });
+    showToast(`تمت إضافة تصنيف "${nameAr}" بنجاح.`);
+  }
+
+  saveCategories();
+  closeCategoryModal();
+}
+
+function deleteCategory(catId) {
+  const cat = adminState.categories.find(c => c.id === catId);
+  if (!cat) return;
+
+  const attachedProducts = adminState.products.filter(p => p.categoryId === catId);
+  let confirmMsg = `هل أنت متأكد من حذف تصنيف "${cat.nameAr}"؟`;
+  if (attachedProducts.length > 0) {
+    confirmMsg += `\n⚠️ تنبيه: يوجد ${attachedProducts.length} صنف مسجل تحت هذا التصنيف! سيتم تحويلها بدون تصنيف.`;
+  }
+
+  if (confirm(confirmMsg)) {
+    adminState.categories = adminState.categories.filter(c => c.id !== catId);
+    if (attachedProducts.length > 0) {
+      adminState.products.forEach(p => {
+        if (p.categoryId === catId) p.categoryId = '';
+      });
+      saveProducts();
+    }
+    saveCategories();
+    showToast(`تم حذف تصنيف "${cat.nameAr}" بنجاح.`);
+  }
 }
 
 // ==========================================

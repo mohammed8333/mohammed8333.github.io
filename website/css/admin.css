@@ -1060,6 +1060,132 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* ==========================================
+   إدارة وتخصيص التصنيفات (Categories Management)
+   ========================================== */
+.categories-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+  padding: 6px 0 20px;
+}
+
+.category-card {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: var(--transition);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--admin-primary);
+  box-shadow: 0 8px 20px rgba(198, 40, 40, 0.08);
+}
+
+.category-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.category-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(198, 40, 40, 0.12), rgba(245, 124, 0, 0.12));
+  color: var(--admin-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 1px solid rgba(198, 40, 40, 0.2);
+  flex-shrink: 0;
+}
+
+.category-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-card-name-ar {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--admin-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.category-card-name-en {
+  font-size: 12.5px;
+  color: var(--admin-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--admin-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  border: 1px solid var(--admin-border);
+}
+
+.category-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.category-card-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.quick-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.quick-icon-btn {
+  height: 42px;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  color: var(--admin-text-main);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.quick-icon-btn:hover, .quick-icon-btn.selected {
+  background: var(--admin-primary);
+  color: white;
+  border-color: var(--admin-primary);
+  transform: scale(1.05);
+}
+
 /* تجاوب الشاشات الصغيرة للموبايل والتابلت */
 @media (max-width: 900px) {
   body {
@@ -1225,5 +1351,13 @@ body {
 
   .status-select {
     width: 100%;
+  }
+
+  .categories-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-icons-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

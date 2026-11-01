@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
   loadOffers();
   loadCoupons();
+  loadCategories();
   loadProductsSync();
   renderOffers();
   renderCategories();
@@ -129,6 +130,21 @@ function loadCoupons() {
     }
   } else {
     state.coupons = [...DEFAULT_COUPONS];
+  }
+}
+
+// تحميل التصنيفات المخصصة من الإدارة
+function loadCategories() {
+  const savedCategories = localStorage.getItem('alsheikh_categories');
+  if (savedCategories) {
+    try {
+      const parsedCats = JSON.parse(savedCategories);
+      state.categories = Array.isArray(parsedCats) && parsedCats.length > 0 ? parsedCats : [...DEFAULT_CATEGORIES];
+    } catch (e) {
+      state.categories = [...DEFAULT_CATEGORIES];
+    }
+  } else {
+    state.categories = [...DEFAULT_CATEGORIES];
   }
 }
 
@@ -313,7 +329,7 @@ function renderCategories() {
 
   state.categories.forEach(cat => {
     const active = state.selectedCategory === cat.id ? 'active' : '';
-    const name = isAr ? cat.nameAr : cat.nameEn;
+    const name = isAr ? cat.nameAr : (cat.nameEn || cat.nameAr);
     html += `
       <button class="cat-pill ${active}" onclick="selectCategory('${cat.id}')">
         <i class="fas ${cat.icon || 'fa-tag'}"></i>
