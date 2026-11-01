@@ -107,6 +107,63 @@ function handleLogout() {
   }
 }
 
+// طلبات أولية لعرضها في لوحة التحكم عند عدم وجود طلبات مسجلة
+const DEFAULT_ORDERS = [
+  {
+    orderRef: '#ORD-1001',
+    customerName: 'أحمد محمود',
+    customerPhone: '01112962692',
+    orderType: 'delivery',
+    area: 'إمبابة - شارع الوحدة',
+    address: 'شارع الوحدة الرئيسي، بجوار البنك الأهلي، عمارة 4 الدور 2',
+    locationUrl: 'https://maps.app.goo.gl/Hi55NFkp5H8ZNDqV6',
+    items: [
+      { name: 'بيتزا سوبر سوبريم', size: 'كبير', quantity: 1, price: 195, totalPrice: 195, extras: ['أطراف جبنة موتزاريلا'] },
+      { name: 'كريب كرانشي دجاج', size: 'عادي', quantity: 2, price: 85, totalPrice: 170, extras: ['بطاطس مقلية إكسترا'] }
+    ],
+    total: 395,
+    paymentMethod: 'الدفع عند الاستلام (كاش)',
+    status: 'Preparing',
+    instructions: 'يرجى الاتصال عند الوصول أسفل العمارة ولا داعي للشطة الحارة.',
+    createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString()
+  },
+  {
+    orderRef: '#ORD-1002',
+    customerName: 'محمود عبد العزيز',
+    customerPhone: '01012345678',
+    orderType: 'takeaway',
+    area: 'استلام مباشر من الفرع',
+    address: 'فرع إمبابة - امتداد شارع الوحدة',
+    locationUrl: '',
+    items: [
+      { name: 'فطيرة مشلتت بالسمن البلدي والقشطة والعسل', size: 'وسط', quantity: 1, price: 140, totalPrice: 140, extras: [] },
+      { name: 'حواوشي أولاد الشيخ بالخلطة السرية', size: 'رغيف كبير', quantity: 2, price: 55, totalPrice: 110, extras: ['مخلل وطحينة'] }
+    ],
+    total: 250,
+    paymentMethod: 'الدفع نقداً بالفرع',
+    status: 'Confirmed',
+    instructions: 'سأمر للاستلام خلال 20 دقيقة.',
+    createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString()
+  },
+  {
+    orderRef: '#ORD-1003',
+    customerName: 'مريم السيد',
+    customerPhone: '01223344556',
+    orderType: 'delivery',
+    area: 'المنيرة الغربية - شارع المطار',
+    address: 'ميدان المطار، عمارة الأمل، الدور 5 شقة 9',
+    locationUrl: 'https://maps.app.goo.gl/Hi55NFkp5H8ZNDqV6',
+    items: [
+      { name: 'بيتزا تشيكن رانش باربيكيو', size: 'وسط', quantity: 1, price: 165, totalPrice: 165, extras: ['صوص رانش إضافي'] }
+    ],
+    total: 190,
+    paymentMethod: 'الدفع عند الاستلام (كاش)',
+    status: 'OutForDelivery',
+    instructions: 'الرجاء الاستعجال والتأكد من وصولها ساخنة.',
+    createdAt: new Date(Date.now() - 70 * 60 * 1000).toISOString()
+  }
+];
+
 // ==========================================
 // 2. تحميل وحفظ البيانات (Data Management)
 // ==========================================
@@ -147,16 +204,17 @@ function loadAdminData() {
     adminState.coupons = [...DEFAULT_COUPONS];
   }
 
-  // تحميل الطلبات
+  // تحميل الطلبات (مع عينات افتراضية مبدئية إذا كانت القائمة فارغة)
   const savedOrders = localStorage.getItem('alsheikh_orders');
   if (savedOrders) {
     try {
-      adminState.orders = JSON.parse(savedOrders);
+      const parsed = JSON.parse(savedOrders);
+      adminState.orders = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...DEFAULT_ORDERS];
     } catch (e) {
-      adminState.orders = [];
+      adminState.orders = [...DEFAULT_ORDERS];
     }
   } else {
-    adminState.orders = [];
+    adminState.orders = [...DEFAULT_ORDERS];
   }
 
   // تحميل الإعدادات
@@ -293,10 +351,11 @@ function renderOverviewStats() {
 }
 
 // ==========================================
-// 5. إدارة ومتابعة الطلبات (Orders Management)
+// 5. إدارة ومتابعة الطلبات كبطاقات ذكية تفاعلية (Orders Cards Grid)
+// لتجنب السكرول الأفقي نهائياً وتوفير تجربة مريحة وسريعة للموبايل والكمبيوتر
 // ==========================================
 function renderOrdersTable() {
-  const container = document.getElementById('orders-table-body');
+  const container = document.getElementById('orders-cards-container') || document.getElementById('orders-table-body');
   if (!container) return;
 
   let filtered = [...adminState.orders];
@@ -313,86 +372,154 @@ function renderOrdersTable() {
       (o.orderRef && o.orderRef.toLowerCase().includes(q)) ||
       (o.customerName && o.customerName.toLowerCase().includes(q)) ||
       (o.customerPhone && o.customerPhone.includes(q)) ||
-      (o.area && o.area.toLowerCase().includes(q))
+      (o.area && o.area.toLowerCase().includes(q)) ||
+      (o.address && o.address.toLowerCase().includes(q))
     );
   }
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <tr>
-        <td colspan="7" style="text-align: center; padding: 50px 20px; color: var(--admin-text-muted);">
-          <i class="fas fa-clipboard-list" style="font-size: 40px; margin-bottom: 12px; opacity: 0.4;"></i>
-          <p style="font-size: 15px; font-weight: 700;">لا توجد طلبات تطابق معايير البحث أو التصفية الحالية.</p>
-        </td>
-      </tr>
+      <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--admin-text-muted); background: var(--admin-card-bg); border-radius: var(--radius-md); border: 1px dashed var(--admin-border);">
+        <i class="fas fa-clipboard-list" style="font-size: 44px; margin-bottom: 12px; opacity: 0.35;"></i>
+        <h4 style="font-size: 15px; font-weight: 800; color: var(--admin-text-main); margin-bottom: 6px;">لا توجد طلبات تطابق هذا التصنيف</h4>
+        <p style="font-size: 12.5px;">جرّب اختيار تصنيف آخر من الأعلى أو مسح كلمة البحث.</p>
+      </div>
     `;
     return;
   }
 
   container.innerHTML = filtered.map(order => {
-    const itemsSummary = order.items.map(i => {
-      let desc = `${i.name} (x${i.quantity})`;
-      if (i.size) desc += ` [${i.size}]`;
-      if (i.extras && i.extras.length > 0) desc += ` +${i.extras.join(', ')}`;
-      return desc;
-    }).join('<br>');
-
     // تنظيف رقم هاتف العميل للتواصل عبر واتساب
-    let cleanPhone = order.customerPhone.replace(/[^0-9]/g, '');
+    let cleanPhone = (order.customerPhone || '').replace(/[^0-9]/g, '');
     if (cleanPhone.startsWith('01')) cleanPhone = '20' + cleanPhone.substring(1);
 
     const waCustomerUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`مرحباً أستاذ ${order.customerName}، معكم إدارة مطعم بيتزا أولاد الشيخ بخصوص طلبكم رقم ${order.orderRef}...`)}`;
 
+    const formattedTime = new Date(order.createdAt).toLocaleString('ar-EG', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const totalQty = (order.items || []).reduce((sum, item) => sum + (item.quantity || 1), 0);
+
     return `
-      <tr>
-        <td>
-          <strong style="color: var(--admin-primary); font-size: 14px;">${order.orderRef}</strong>
-          <div style="font-size: 11.5px; color: var(--admin-text-muted);">${new Date(order.createdAt).toLocaleString('ar-EG')}</div>
-        </td>
-        <td>
-          <div style="font-weight: 800;">${order.customerName}</div>
-          <div style="font-size: 12.5px; color: var(--admin-text-muted);">${order.customerPhone}</div>
-          <div style="display: flex; gap: 6px; margin-top: 4px;">
-            <a href="tel:${order.customerPhone}" class="btn-admin-action ghost" style="padding: 2px 6px; font-size: 11px;" title="اتصال">
+      <div class="order-card" data-status="${order.status}">
+        <!-- 1. ترويسة الكرت -->
+        <div class="order-card-header">
+          <div class="order-card-ref-group">
+            <span class="order-ref-badge">${order.orderRef}</span>
+            <span class="order-type-badge ${order.orderType === 'delivery' ? 'delivery' : 'takeaway'}">
+              <i class="fas ${order.orderType === 'delivery' ? 'fa-motorcycle' : 'fa-shopping-bag'}"></i>
+              ${order.orderType === 'delivery' ? 'توصيل للمنزل' : 'استلام من المطعم'}
+            </span>
+          </div>
+          <div class="order-card-time">
+            <i class="far fa-clock"></i>
+            <span>${formattedTime}</span>
+          </div>
+        </div>
+
+        <!-- 2. بيانات العميل والتواصل السريع -->
+        <div class="order-card-customer">
+          <div class="customer-info-main">
+            <div class="customer-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div>
+              <div class="customer-name">${order.customerName}</div>
+              <div class="customer-phone">${order.customerPhone}</div>
+            </div>
+          </div>
+          <div class="customer-quick-actions">
+            <a href="tel:${order.customerPhone}" class="btn-customer-action tel" title="اتصال هاتفي مباشر">
               <i class="fas fa-phone-alt"></i>
+              <span>اتصال</span>
             </a>
-            <a href="${waCustomerUrl}" target="_blank" class="btn-admin-action success" style="padding: 2px 6px; font-size: 11px;" title="واتساب">
+            <a href="${waCustomerUrl}" target="_blank" class="btn-customer-action wa" title="محادثة واتساب">
               <i class="fab fa-whatsapp"></i>
+              <span>واتساب</span>
             </a>
           </div>
-        </td>
-        <td>
-          <div style="font-weight: 700;">${order.orderType === 'delivery' ? '🛵 توصيل' : '🛍️ استلام'}</div>
-          ${order.area ? `<div style="font-size: 11.5px; color: var(--admin-text-muted);">${order.area}</div>` : ''}
-          ${order.address ? `<div style="font-size: 11px; max-width: 180px; color: var(--admin-text-muted);">${order.address}</div>` : ''}
-          ${order.locationUrl ? `<a href="${order.locationUrl}" target="_blank" style="color: var(--admin-primary); font-size: 11px; text-decoration: underline;"><i class="fas fa-map-marker-alt"></i> موقع GPS</a>` : ''}
-        </td>
-        <td>
-          <div style="font-size: 12px; line-height: 1.5; max-height: 80px; overflow-y: auto;">
-            ${itemsSummary}
+        </div>
+
+        <!-- 3. تفاصيل العنوان وموقع GPS -->
+        ${order.orderType === 'delivery' || order.area || order.address ? `
+        <div class="order-card-address">
+          <i class="fas fa-map-marker-alt" style="color: var(--admin-primary); margin-top: 3px; flex-shrink: 0;"></i>
+          <div style="flex: 1;">
+            <div>${order.area ? `<strong>${order.area}</strong>` : ''}${order.area && order.address ? ' - ' : ''}${order.address || ''}</div>
+            ${order.locationUrl ? `
+              <div style="margin-top: 5px;">
+                <a href="${order.locationUrl}" target="_blank" class="gps-link">
+                  <i class="fas fa-location-arrow"></i> فتح موقع العميل على الخريطة (GPS)
+                </a>
+              </div>
+            ` : ''}
           </div>
-          ${order.instructions ? `<div style="font-size: 11px; color: #b45309; margin-top: 4px;">ملاحظة: ${order.instructions}</div>` : ''}
-        </td>
-        <td>
-          <strong style="font-size: 15px; color: var(--admin-primary);">${order.total} ج.م</strong>
-          <div style="font-size: 11px; color: var(--admin-text-muted);">${order.paymentMethod || 'كاش'}</div>
-        </td>
-        <td>
-          <select class="form-control" style="padding: 6px 10px; font-size: 12.5px; font-weight: 700;" onchange="updateOrderStatus('${order.orderRef}', this.value)">
-            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>⏳ قيد المراجعة</option>
-            <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>✔️ تم التأكيد</option>
-            <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>🔥 قيد التجهيز</option>
-            <option value="OutForDelivery" ${order.status === 'OutForDelivery' ? 'selected' : ''}>🛵 في الطريق</option>
-            <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>✅ تم التسليم</option>
-            <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>❌ ملغي</option>
-          </select>
-        </td>
-        <td>
-          <button class="btn-admin-action danger" onclick="deleteOrder('${order.orderRef}')" title="حذف الطلب">
+        </div>
+        ` : ''}
+
+        <!-- 4. تفاصيل الأصناف والطلبات -->
+        <div class="order-card-items">
+          <div class="items-header">
+            <span><i class="fas fa-utensils"></i> الأصناف المطلوبة (${totalQty}):</span>
+          </div>
+          <div class="items-list">
+            ${(order.items || []).map(item => `
+              <div>
+                <div class="item-row">
+                  <div class="item-qty-name">
+                    <span class="item-qty">x${item.quantity || 1}</span>
+                    <span class="item-name">${item.name}</span>
+                    ${item.size ? `<span class="item-size">(${item.size})</span>` : ''}
+                  </div>
+                  <div class="item-price">${(item.totalPrice || item.price * (item.quantity || 1))} ج.م</div>
+                </div>
+                ${item.extras && item.extras.length > 0 ? `
+                  <div class="item-extras">+ إضافات: ${item.extras.join('، ')}</div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+          ${order.instructions ? `
+            <div class="order-instructions-box">
+              <i class="fas fa-comment-dots" style="flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>ملاحظات العميل:</strong> ${order.instructions}</span>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 5. شريط الإجمالي وطريقة الدفع -->
+        <div class="order-card-financial">
+          <div class="total-highlight">
+            <span>المبلغ الإجمالي:</span>
+            <span class="total-amount">${order.total} ج.م</span>
+          </div>
+          <div class="payment-method-badge">
+            <i class="fas fa-wallet"></i> ${order.paymentMethod || 'الدفع عند الاستلام (كاش)'}
+          </div>
+        </div>
+
+        <!-- 6. شريط التحكم بحالة الطلب والحذف -->
+        <div class="order-card-footer">
+          <div class="status-selector-wrapper">
+            <span class="status-label">حالة الطلب:</span>
+            <select class="form-control status-select" onchange="updateOrderStatus('${order.orderRef}', this.value)">
+              <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>⏳ قيد المراجعة</option>
+              <option value="Confirmed" ${order.status === 'Confirmed' ? 'selected' : ''}>✔️ تم التأكيد</option>
+              <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>🔥 قيد التجهيز</option>
+              <option value="OutForDelivery" ${order.status === 'OutForDelivery' ? 'selected' : ''}>🛵 في الطريق</option>
+              <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>✅ تم التسليم</option>
+              <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>❌ ملغي</option>
+            </select>
+          </div>
+          <button class="btn-delete-order" onclick="deleteOrder('${order.orderRef}')" title="حذف الطلب">
             <i class="fas fa-trash-alt"></i>
           </button>
-        </td>
-      </tr>
+        </div>
+      </div>
     `;
   }).join('');
 }
